@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/models/db_data.dart';
 import 'package:info_med/services/provider.dart';
+import 'package:info_med/widgets/my_text.dart';
 import 'package:provider/provider.dart';
 
 import '../services/shared_preference.dart';
@@ -20,8 +21,45 @@ class _SavedState extends State<Saved> {
   final key = GlobalKey<AnimatedListState>();
 
 
+  @override
+  Widget build(BuildContext context) {
+    return Consumer3<DataProvider,databaseHelper,SharedPreference>(
+        builder: (context, value,db,language,child) {
+      return Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            color: Colors.lightGreen,
+            // child: Image.asset(
+            //   'assets/images/download.png',
+            //   fit: BoxFit.cover,
+            // ),
+          ),
+          value.listFavored.isNotEmpty
+              ? Padding(
+                padding: const EdgeInsets.only(top: 100.0,bottom: 90),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: AnimatedList(
+                    physics: const NeverScrollableScrollPhysics(),
+                    key: key,
+                    shrinkWrap: true,
+                    initialItemCount: value.listFavored.length,
+                    itemBuilder: (context, index, animation) =>
+                        listItem(context, index, animation, value.listFavored,db,language),
+                  ),
+                ),
+              )
+              :  Center(
+                  child:language.language == 'Kurdish' ?TitleText(txt: 'هیچ دەرمانێک نەدۆزرایەوە',size: 18,):language.language == 'Arabic' ?TitleText(txt:'لم يتم العثور على معلومات',size: 18,):TitleText(txt: 'No information founded',size: 18,ltr: true),
+                )
+        ],
+      );
+    });
+  }
+
   Widget listItem(BuildContext context, int index, Animation<double> animation,
-          List<DbData> list,databaseHelper db) =>
+          List<DbData> list,databaseHelper db,SharedPreference language) =>
       SizeTransition(
         sizeFactor: animation,
         child: Padding(
@@ -45,7 +83,7 @@ class _SavedState extends State<Saved> {
                     backgroundColor: Colors.transparent,
                     context: context,
                     builder: (context) {
-                      Map<String,dynamic> map ={"description":list[index].description,"instruction":list[index].instruction,"side":list[index].sideeffect};
+                      Map<String,dynamic> map ={"description":list[index].description,"instruction":list[index].instruction,"side":list[index].sideeffect,'language':list[index].language};
                       return ApiDraggableSheet(
                           map: map,
                           name: list[index].name.toString(),
@@ -60,7 +98,7 @@ class _SavedState extends State<Saved> {
                         key.currentState!.removeItem(
                           index,
                           (context, animation) =>
-                              listItem(context, index, animation, list,db),
+                              listItem(context, index, animation, list,db,language),
                         );
             
                         Flushbar(
@@ -74,22 +112,12 @@ class _SavedState extends State<Saved> {
                               onPressed: () {
                                 remove = false;
                               },
-                              child: const Text(
-                                'Undo',
-                                style: TextStyle(color: Colors.blue),
+                              child:  Text(
+                                language.language == 'Kurdish' ?'گەڕانەوە':language.language == 'Arabic' ?'الغاء التحميل':'Undo',
+                                style: const TextStyle(color: Colors.blue),
                               )),
                           messageText: Center(
-                            child: Text(
-                              'Deleted Successfuly',
-                              style: TextStyle(
-                                  color: Provider.of<SharedPreference>(context,
-                                              listen: false)
-                                          .darkTheme
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18),
-                            ),
+                            child:language.language == 'Kurdish' ?TitleText(txt: 'بە سەرکەووتویی سڕایەوە',size: 18,):language.language == 'Arabic' ?TitleText(txt:'حذف بنجاح',size: 18,):TitleText(txt: 'Deleted Successfully',size: 18,),
                           ),
                           borderColor: Colors.white,
                         ).show(context).then(
@@ -106,7 +134,7 @@ class _SavedState extends State<Saved> {
                         );
                       });
                     },
-                    tooltip: 'Delete',
+                    tooltip: language.language == 'Kurdish' ?'سڕینەوە':language.language == 'Arabic' ?'حذف':'Delete',
                     icon: const Icon(
                       Icons.delete,
                       color: Colors.black87,
@@ -117,43 +145,4 @@ class _SavedState extends State<Saved> {
         ),
       );
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer2<DataProvider,databaseHelper>(
-        builder: (context, value,db ,child) {
-      return Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            color: Colors.lightGreen,
-            // child: Image.asset(
-            //   'assets/images/download.png',
-            //   fit: BoxFit.cover,
-            // ),
-          ),
-          value.listFavored.isNotEmpty
-              ? Padding(
-                padding: const EdgeInsets.only(top: 100.0,bottom: 90),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: AnimatedList(
-                    physics: const NeverScrollableScrollPhysics(),
-                    key: key,
-                    shrinkWrap: true,
-                    initialItemCount: value.listFavored.length,
-                    itemBuilder: (context, index, animation) =>
-                        listItem(context, index, animation, value.listFavored,db),
-                  ),
-                ),
-              )
-              : const Center(
-                  child:Text(
-                        'No saved Drugs',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                )
-        ],
-      );
-    });
-  }
 }

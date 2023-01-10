@@ -22,7 +22,8 @@ class databaseHelper with ChangeNotifier {
   static const c_sideeffect = 'sideeffect';
   static const c_image = 'image';
   static const c_type = 'type';
-   static const rt_name = 'Reminders';
+  static const c_language = 'language';
+  static const rt_name = 'Reminders';
   static const r_name = 'name';
   static const r_time = 'time';
   static const r_date = 'date';
@@ -76,7 +77,8 @@ class databaseHelper with ChangeNotifier {
       $c_instruction TEXT NOT NULL,
       $c_sideeffect TEXT NOT NULL,
       $c_image TEXT NOT NULL,
-      $c_type TEXT NOT NULL
+      $c_type TEXT NOT NULL,
+      $c_language TEXT NOT NULL
     )
 ''');
   }

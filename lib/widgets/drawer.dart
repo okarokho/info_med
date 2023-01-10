@@ -17,37 +17,26 @@ List<String> listOfLang = ['Kurdish','English','Arabic'];
   @override
   void initState() {
     super.initState();
-    image = Image.network(
-        'https://media.istockphoto.com/photos/many-colorful-pills-and-capsules-spilling-on-blue-background-picture-id1333744874?k=20&m=1333744874&s=612x612&w=0&h=BxZjGZDFhnGCAYpw3Ydui-HuUrXK56utmfH6jFXEiuw=');
+    image = Image.asset('assets/images/drug_bottle.jpg');
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topRight: Radius.circular(70), bottomRight: Radius.circular(70)),
       ),
       child: Column(children: [
-        Stack(
-          children: [
-            SizedBox(
-              height: 203,
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.only(topRight: Radius.circular(70)),
-                child: image ,
-              ),
-            ),
-            const Positioned(
-              left: 90,
-              top: 165,
-              child: Center(
-                child: Text("hi"),
-              ),
-            )
-          ],
+        SizedBox(
+          height: 203,
+          child: ClipRRect(
+            borderRadius:
+                const BorderRadius.only(topRight: Radius.circular(70)),
+            child: image ,
+          ),
         ),
         Consumer<SharedPreference>(
           builder: (context, value, child) => ListTile(

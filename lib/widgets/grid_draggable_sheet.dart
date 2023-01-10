@@ -12,6 +12,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/models/db_data.dart';
 import 'package:info_med/services/shared_preference.dart';
+import 'package:info_med/widgets/my_text.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
@@ -79,8 +80,8 @@ class _MyDraggableSCrollableSheetState
                       stops: [0, 0.1])),
               child: Consumer2<databaseHelper,SharedPreference>(
                 builder: (context,db, value,child) {
-                   final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==widget.name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==widget.name):Boxes.getBoxArabic().values.where((element) => element.name==widget.name);
-                  final sideffect=boxInstance.first.side_effect.toString().substring(1,boxInstance.first.side_effect.length-1).split(RegExp("[,;،]"));
+                   final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==widget.name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==widget.name):value.language == 'Arabic'?Boxes.getBoxArabic().values.where((element) => element.name==widget.name):null;
+                  final sideffect=boxInstance!.first.side_effect.toString().substring(1,boxInstance.first.side_effect.length-1).split(RegExp("[,;،]"));
                  
                   return Column(
                     children: [
@@ -251,9 +252,9 @@ class _MyDraggableSCrollableSheetState
                                                   description: boxInstance.first.description.toString(),
                                                   instruction: boxInstance.first.instruction.toString(),
                                                   sideeffect: boxInstance.first.side_effect.toString(),
-                                                  image:
-                                                      boxInstance.first.image.toString(),
-                                                  type: 'n');
+                                                  image:boxInstance.first.image.toString(),
+                                                  type: 'n',
+                                                  language: value.language == 'Kurdish' ?'Kurdish':value.language == 'Arabic' ?'Arabic':'English');
                                               db.insert(test.tojson());
                                               context.read<DataProvider>().getDataFavored();
                                             }
@@ -286,59 +287,31 @@ class _MyDraggableSCrollableSheetState
                           child: ListView(
                             controller: scrollController,
                             children: [
-                               const Text(
-                                'ناوی دەرمان:',textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                                value.language == 'Kurdish' ?TitleText(txt: 'ناوی دەرمان:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'اسم الطب:',size: 18,):TitleText(txt: 'Medicine Name:',size: 18,ltr: true),
                               const SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                widget.name,textDirection: TextDirection.rtl,
-                                style: const TextStyle(),
-                              ),
-                              
+                              value.language == 'English' ?TitleText(txt: widget.name,size: 12,ltr: true,):TitleText(txt:widget.name,size: 12,),                              
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'دەربارە:',
-                                textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              value.language == 'Kurdish' ?TitleText(txt: 'دەربارە:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'وصف:',size: 18,):TitleText(txt: 'Description:',size: 18,ltr: true),
                               const SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                boxInstance.first.description,
-                                textDirection: TextDirection.rtl,
-                                style: const TextStyle(),
-                              ),
+                              value.language == 'English' ?TitleText(txt: boxInstance.first.description,size: 12,ltr: true,):TitleText(txt:boxInstance.first.description,size: 12,),                              
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'بەکارهێنان:',textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              value.language == 'Kurdish' ?TitleText(txt: 'بەکارهێنان:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'تعليمات:',size: 18,):TitleText(txt: 'Instruction:',size: 18,ltr: true), 
                               const SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                boxInstance.first.instruction,textDirection: TextDirection.rtl,
-                                style: const TextStyle(),
-                              ),
+                              value.language == 'English' ?TitleText(txt: boxInstance.first.instruction,size: 12,ltr: true,):TitleText(txt:boxInstance.first.instruction,size: 12,),                              
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'کاریگەری لاوەکی:',textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              value.language == 'Kurdish' ?TitleText(txt: 'کاریگەری لاوەکی:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'اعراض جانبية:',size: 18,):TitleText(txt: 'Side Effect:',size: 18,ltr: true),      
                               const SizedBox(
                                 height: 8,
                               ),
@@ -347,10 +320,8 @@ class _MyDraggableSCrollableSheetState
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: 
                                   sideffect.length ,
-                                itemBuilder: (context, index) => Text(
-                                  '- ${sideffect[index]}',textDirection: TextDirection.rtl,
-                                  style: const TextStyle(),
-                                ),
+                                itemBuilder: (context, index) => 
+                                value.language == 'English' ?TitleText(txt: '- ${sideffect[index]}',size: 12,ltr: true,):TitleText(txt:'- ${sideffect[index]}',size: 12,),                              
                               ),
                               const SizedBox(
                                 height: 10,
@@ -365,25 +336,6 @@ class _MyDraggableSCrollableSheetState
               )),
         );
       },
-    );
-  }
-}
-
-class MyText extends StatelessWidget {
-   MyText({
-    Key? key,
-    required this.text,
-    required this.size
-  }) : super(key: key);
-
-String text;
-double size;
-  @override
-  Widget build(BuildContext context) {
-    return  Text(
-      text,textDirection: TextDirection.rtl,
-      style: TextStyle(
-          fontSize: size, fontWeight: FontWeight.bold),
     );
   }
 }

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/services/database.dart';
+import 'package:info_med/services/shared_preference.dart';
+import 'package:info_med/widgets/my_text.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
@@ -244,7 +246,8 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                   instruction: widget.map['instruction'],
                                                   sideeffect: widget.map['side'],
                                                   image: widget.imageUrl,
-                                                  type: widget.type);
+                                                  type: widget.type,
+                                                  language: context.watch<SharedPreference>().language == 'Kurdish' ?'Kurdish':context.watch<SharedPreference>().language == 'Arabic' ?'Arabic':'English');
                                               db.insert(test.tojson());
                                               context.read<DataProvider>().getDataFavored();
                                             }
@@ -275,59 +278,31 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                           child: ListView(
                             controller: scrollController,
                             children: [
-                             const Text(
-                                'ناوی دەرمان:',textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'ناوی دەرمان:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'اسم الطب:',size: 18,):TitleText(txt: 'Medicine Name:',size: 18,ltr: true),
                               const SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                widget.name,textDirection: TextDirection.rtl,
-                                style: const TextStyle(),
-                              ),
-                              
+                              widget.map['language'] == 'English' ?TitleText(txt: widget.name,size: 12,ltr: true,):TitleText(txt:widget.name,size: 12,),                              
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'دەربارە:',
-                                textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'دەربارە:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'وصف:',size: 18,):TitleText(txt: 'Description:',size: 18,ltr: true),
                               const SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                widget.map['description'],
-                                textDirection: TextDirection.rtl,
-                                style: const TextStyle(),
-                              ),
+                              widget.map['language'] == 'English' ?TitleText(txt: widget.map['description'],size: 12,ltr: true,):TitleText(txt:widget.map['description'],size: 12,),                              
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'بەکارهێنان:',textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'بەکارهێنان:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'تعليمات:',size: 18,):TitleText(txt: 'Instruction:',size: 18,ltr: true), 
                               const SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                widget.map['instruction'],textDirection: TextDirection.rtl,
-                                style: const TextStyle(),
-                              ),
+                              widget.map['language'] == 'English' ?TitleText(txt: widget.map['instruction'],size: 12,ltr: true,):TitleText(txt:widget.map['instruction'],size: 12,),                              
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'کاریگەری لاوەکی:',textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'کاریگەری لاوەکی:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'اعراض جانبية:',size: 18,):TitleText(txt: 'Side Effect:',size: 18,ltr: true),      
                               const SizedBox(
                                 height: 8,
                               ),
@@ -336,15 +311,12 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: 
                                   sideffect.length ,
-                                itemBuilder: (context, index) => Text(
-                                  '- ${sideffect[index]}',textDirection: TextDirection.rtl,
-                                  style: const TextStyle(),
-                                ),
+                                itemBuilder: (context, index) => 
+                                widget.map['language'] == 'English' ?TitleText(txt: '- ${sideffect[index]}',size: 12,ltr: true,):TitleText(txt:'- ${sideffect[index]}',size: 12,),                              
                               ),
                               const SizedBox(
                                 height: 10,
-                              ),
-                             
+                              ),                             
                             ],
                           ),
                         ),

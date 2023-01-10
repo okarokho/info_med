@@ -55,6 +55,7 @@ class SharedPreference with ChangeNotifier {
     final SharedPreferences laguagePrefs = _prefs!;
     laguagePrefs.setString('lan', x);
     _language = x;
+    notifyListeners();
   }
 
  

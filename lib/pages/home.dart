@@ -46,99 +46,101 @@ class _HomeState extends State<Home> {
         topLeft: Radius.circular(12),
       ),
          child: SizedBox(
-          height: 74,
-           child: BottomNavigationBar(
-              elevation:10,
-              
-              backgroundColor: Colors.grey[100],
-              type: BottomNavigationBarType.fixed,
-              currentIndex: currentIndex,
-              selectedItemColor:
-                  Provider.of<SharedPreference>(context).darkTheme
-                      ? Colors.white
-                      : const Color( 0xff8F00FF),
-              unselectedItemColor:
-                  Provider.of<SharedPreference>(context).darkTheme
-                      ? Colors.white
-                      : Colors.grey,
-              unselectedFontSize: 12,
-              selectedFontSize: 12,
-
-              items: [
-                BottomNavigationBarItem(
-                  
-                    activeIcon: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.home_rounded,
-                          size: 35,
-                        )),
-                    icon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          currentIndex = 0;
-                        });
-                      },
-                      icon: const Icon(Icons.home_outlined, size: 35),
-                    ),
-                    label: 'Home'),
-                      BottomNavigationBarItem(
-                    activeIcon: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.favorite_rounded, size: 35)),
-                    icon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          currentIndex = 1;
-                        });
-                      },
-                      icon:
-                          const Icon(Icons.favorite_outline_rounded, size: 35),
-                    ),
-                    label: 'Saved'),
-                     
-                const BottomNavigationBarItem(
-
-                    icon: Icon(
-                      
-                        Icons.expand_more_rounded,
-                        color: Colors.transparent,
-                        size: 10,
-                      ),
-                    label: ''),
-              
-                    BottomNavigationBarItem(
-                    activeIcon: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.timeline_rounded,
-                          size: 35,
-                        )),
-                    icon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          currentIndex = 3;
-                        });
-                      },
-                      icon: const Icon(Icons.timeline_rounded, size: 35),
-                    ),
-                    label: 'Tracking'),
-                    BottomNavigationBarItem(
-                    activeIcon: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.access_time_filled_rounded, size: 35)),
-                    icon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          currentIndex = 4;
-                        });
-                      },
-                      icon:
-                          const Icon(Icons.access_time_rounded, size: 35),
-                    ),
-                    label: 'Reminder'),
+          height: 80,
+           child: Consumer<SharedPreference>(
+              builder: (context, value, child) =>  BottomNavigationBar(
+                elevation:10,
+                
+                backgroundColor: Colors.grey[100],
+                type: BottomNavigationBarType.fixed,
+                currentIndex: currentIndex,
+                selectedItemColor:
+                    value.darkTheme
+                        ? Colors.white
+                        : const Color( 0xff8F00FF),
+                unselectedItemColor:
+                    value.darkTheme
+                        ? Colors.white
+                        : Colors.grey,
+                unselectedFontSize: 12,
+                selectedFontSize: 12,
+           
+                items: [
+                  BottomNavigationBarItem(
                     
-              ]),
+                      activeIcon: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.home_rounded,
+                            size: 35,
+                          )),
+                      icon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            currentIndex = 0;
+                          });
+                        },
+                        icon: const Icon(Icons.home_outlined, size: 35),
+                      ),
+                      label:value.language == 'Kurdish' ?'سەرەکی':value.language == 'Arabic' ?'رئیسي':'Home',),
+                        BottomNavigationBarItem(
+                      activeIcon: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.favorite_rounded, size: 35)),
+                      icon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            currentIndex = 1;
+                          });
+                        },
+                        icon:
+                            const Icon(Icons.favorite_outline_rounded, size: 35),
+                      ),
+                      label:value.language == 'Kurdish' ?'دڵخوازەکان':value.language == 'Arabic' ?'مفضل':'Saved',),
+                       
+                  const BottomNavigationBarItem(
+           
+                      icon: Icon(
+                        
+                          Icons.expand_more_rounded,
+                          color: Colors.transparent,
+                          size: 10,
+                        ),
+                      label: ''),
+                
+                      BottomNavigationBarItem(
+                      activeIcon: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.timeline_rounded,
+                            size: 35,
+                          )),
+                      icon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            currentIndex = 3;
+                          });
+                        },
+                        icon: const Icon(Icons.timeline_rounded, size: 35),
+                      ),
+                      label:value.language == 'Kurdish' ?'چاودێری':value.language == 'Arabic' ?'تتبع':'Tracking',),
+                      BottomNavigationBarItem(
+                      activeIcon: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.access_time_filled_rounded, size: 35)),
+                      icon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            currentIndex = 4;
+                          });
+                        },
+                        icon:
+                            const Icon(Icons.access_time_rounded, size: 35),
+                      ),
+                      label:value.language == 'Kurdish' ?'بیرخستنەوە':value.language == 'Arabic' ?'تذکیر':'Reminder',),
+                      
+                ]),
+        ),
          ),
        ),
       body: currentIndex == 0 ? Main() : currentIndex == 1 ? const Saved() :  currentIndex == 3 ? const Tracking() :  Reminder(),
