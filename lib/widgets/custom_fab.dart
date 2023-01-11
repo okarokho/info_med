@@ -13,7 +13,6 @@ import 'package:info_med/services/ml_text_recognition.dart';
 import 'package:info_med/services/shared_preference.dart';
 import 'package:info_med/widgets/api_draggable_sheet.dart';
 import 'package:info_med/widgets/grid_draggable_sheet.dart';
-
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -31,8 +30,9 @@ class _MyFABState extends State<MyFAB> {
   Image? image;
   var imagePicker = PickImage();
   var textDetector = TextDetection();
-  var kurdish = Get();
+  var api = Get();
   var controller = TextEditingController();
+  final GlobalKey flushBarKey = GlobalKey();
 CroppedFile? dd;
   @override
   void initState() {
@@ -55,7 +55,7 @@ CroppedFile? dd;
           CropAspectRatioPreset.ratio16x9,
         ],
         uiSettings:[ AndroidUiSettings(
-          toolbarTitle: 'Crop',
+          toolbarTitle: context.read<SharedPreference>().language == 'Kurdish' ?'ناوی دەرمانەکە بخە ناو لاکێشەکە':context.read<SharedPreference>().language == 'Arabic' ?'حدد اسم الطب':'Select the Name of Medicine',
           toolbarColor: Colors.lightGreen,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.ratio16x9,
@@ -72,18 +72,18 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
     return Builder(builder: (context) {
       return Padding(
 
-        padding: const EdgeInsets.only(bottom: 5.0),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: Container(
           alignment: Alignment.bottomCenter,
-          child: ClipRRect(
+          child: Material(
+            elevation: 5,
             borderRadius: BorderRadius.circular(100),
             child: Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(100),
                   color:  const Color( 0xff8F00FF)),
-              height: 66,
-              width: 66,
+              height: 64,
+              width: 64,
               child: Consumer<SharedPreference>(
                 builder: (context, value, child) => SpeedDial(
                   elevation: 0.0,
@@ -97,10 +97,10 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                   children: [
                     SpeedDialChild(
                       child: const Icon(Icons.camera_alt_rounded),
-                      label: 'Camera',
+                      label: value.language == 'Kurdish' ?'کامێرا':value.language == 'Arabic' ?'كاميرا':'Camera',
                       onTap: () async {
                         textDetector.scannedText = '';
-                         kurdish.map.clear();
+                        api.map.clear();
                         imagePicker.image = null;
                         Camera.test==null;
                         dd=null;
@@ -118,37 +118,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                               XFile(dd!.path));
                           var name = capitalize(
                               textDetector.scannedText!);
-                          Flushbar(
-                            duration: const Duration(milliseconds: 600),
-                            showProgressIndicator: true,
-                            borderRadius: BorderRadius.circular(15),
-                            barBlur: 5,
-                            flushbarPosition: FlushbarPosition.TOP,
-                            flushbarStyle: FlushbarStyle.FLOATING,
-                            animationDuration:
-                                const Duration(milliseconds: 400),
-                            borderColor: Colors.white,
-                            reverseAnimationCurve: Curves.easeOut,
-                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 70, vertical: 4),
-                            messageText: Center(
-                              child: Text(
-                                'Loading...',
-                                style: TextStyle(
-                                    color: Provider.of<SharedPreference>(
-                                                context,
-                                                listen: false)
-                                            .darkTheme
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18),
-                              ),
-                            ),
-                          ).show(context);
-              
-                         
+            
                            final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
                           
                           if (boxInstance.isNotEmpty) {
@@ -159,8 +129,36 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                               builder: (context) => MyDraggableSCrollableSheet(name: name,),
                             );
                           } else {
-                             await kurdish.getByName(name);
-                            if (kurdish.map.isEmpty) {
+                            
+                            Flushbar(
+                            key:flushBarKey,
+                            borderColor: Colors.white,
+                            showProgressIndicator: true,
+                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
+                            barBlur: 5,
+                            flushbarPosition: FlushbarPosition.TOP,
+                            flushbarStyle: FlushbarStyle.FLOATING,
+                            animationDuration:
+                                const Duration(milliseconds: 400),
+                            reverseAnimationCurve: Curves.easeOut,
+                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 70, vertical: 4),
+                            messageText: Center(
+                              child: Text(
+                                value.language == 'Kurdish' ?'... چاوەڕوانبە':value.language == 'Arabic' ?'... جار التحميل':'loading ...',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ).show(context);
+            
+                          await api.getByName(name,value.language);
+            
+                           (flushBarKey.currentWidget as Flushbar).dismiss();
+            
+                            if (api.map.isEmpty) {
                               Flushbar(
                                 duration: const Duration(milliseconds: 2000),
                                 borderRadius: BorderRadius.circular(15),
@@ -172,14 +170,8 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                     horizontal: 25, vertical: 2),
                                 messageText: Center(
                                   child: Text(
-                                    'Sorry The Drug You Searching Not Found !!',
-                                    style: TextStyle(
-                                        color: Provider.of<SharedPreference>(
-                                                    context,
-                                                    listen: false)
-                                                .darkTheme
-                                            ? Colors.white
-                                            : Colors.black,
+                                    value.language == 'Kurdish' ?'ببورە ئەو دەرمانەی کە بەدوایدا دەگەڕێیت نەدۆزرایەوە':value.language == 'Arabic' ?'آسف لم يتم العثور على الدواء الذي تبحث عنه':'Sorry The Drug You Searching Not Found !!',
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15),
                                   ),
@@ -200,10 +192,10 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                     ),
                     SpeedDialChild(
                       child: const Icon(Icons.image_search_rounded),
-                      label: 'Gallery',
+                      label: value.language == 'Kurdish' ?'گەلەری':value.language == 'Arabic' ?'المعرض':'Gallery',
                       onTap: () async {
                         textDetector.scannedText = '';
-                        kurdish.map.clear();
+                        api.map.clear();
                         imagePicker.image = null;
                         dd=null;
                         await imagePicker.pickiImageGallery();
@@ -214,36 +206,6 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                           var name =  capitalize(
                               textDetector.scannedText!);
               
-                          Flushbar(
-                            duration: const Duration(milliseconds: 600),
-                            borderColor: Colors.white,
-                            showProgressIndicator: true,
-                            borderRadius: BorderRadius.circular(15),
-                            barBlur: 5,
-                            flushbarPosition: FlushbarPosition.TOP,
-                            flushbarStyle: FlushbarStyle.FLOATING,
-                            animationDuration:
-                                const Duration(milliseconds: 400),
-                            reverseAnimationCurve: Curves.easeOut,
-                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 70, vertical: 4),
-                            messageText: Center(
-                              child: Text(
-                                'Loading...',
-                                style: TextStyle(
-                                    color: Provider.of<SharedPreference>(
-                                                context,
-                                                listen: false)
-                                            .darkTheme
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18),
-                              ),
-                            ),
-                          ).show(context);
-                          await kurdish.getByName(name);
                           
                             final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
                        
@@ -253,12 +215,41 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                               context: context,
                               backgroundColor: Colors.transparent,
                               builder: (context) => MyDraggableSCrollableSheet(
-                               
                                   name: name,
                                 ),
                             );
                           } else {
-                            if (kurdish.map.isEmpty) {
+                            
+                            Flushbar(
+                            key:flushBarKey,
+                            borderColor: Colors.white,
+                            showProgressIndicator: true,
+                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
+                            barBlur: 5,
+                            flushbarPosition: FlushbarPosition.TOP,
+                            flushbarStyle: FlushbarStyle.FLOATING,
+                            animationDuration:
+                                const Duration(milliseconds: 400),
+                            reverseAnimationCurve: Curves.easeOut,
+                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 75, vertical: 4),
+                            messageText: Center(
+                              child: Text(
+                                value.language == 'Kurdish' ?'... چاوەڕوانبە':value.language == 'Arabic' ?'... جار التحميل':'loading ...',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ).show(context);
+            
+                          await api.getByName(name,value.language);
+            
+                           (flushBarKey.currentWidget as Flushbar).dismiss();
+            
+            
+                            if (api.map.isEmpty) {
                               Flushbar(
                                 duration: const Duration(milliseconds: 2000),
                                 borderRadius: BorderRadius.circular(15),
@@ -270,14 +261,8 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                     horizontal: 25, vertical: 2),
                                 messageText: Center(
                                   child: Text(
-                                    'Sorry The Drug You Searching Not Found !!',
-                                    style: TextStyle(
-                                        color: Provider.of<SharedPreference>(
-                                                    context,
-                                                    listen: false)
-                                                .darkTheme
-                                            ? Colors.white
-                                            : Colors.black,
+                                    value.language == 'Kurdish' ?'ببورە ئەو دەرمانەی کە بەدوایدا دەگەڕێیت نەدۆزرایەوە':value.language == 'Arabic' ?'آسف لم يتم العثور على الدواء الذي تبحث عنه':'Sorry The Drug You Searching Not Found !!',
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15),
                                   ),
@@ -298,9 +283,9 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                     ),
                     SpeedDialChild(
                       child: const Icon(Icons.manage_search_rounded),
-                      label: 'Name',
+                      label: value.language == 'Kurdish' ?'گەڕان بە ناو':value.language == 'Arabic' ?'البحث عن الإسم':'Search by Name',
                       onTap: () async {
-                        kurdish.map.clear();
+                        api.map.clear();
                         await showModalBottomSheet(
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
@@ -324,9 +309,11 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                       Icons.search,
                                       color: Colors.grey[600],
                                     ),
-                                    hintText: "Search Medicine...",
+                                    hintText: value.language == 'Kurdish' ?'ناوی دەرمان':value.language == 'Arabic' ?'أدخل الاسم':'Enter a Name',
                                     hintStyle: const TextStyle(
-                                        color: Colors.grey, fontSize: 15),
+                                    leadingDistribution: TextLeadingDistribution.even,
+                                    height: 1,  
+                                    color: Colors.grey, fontSize: 15),
                                     border: InputBorder.none,
                                   ),
                                   controller: controller,
@@ -338,13 +325,11 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                             ),
                           ),
                         );
-              
-                        await kurdish.getByName(
-                           capitalize(controller.text));
-                                String name = capitalize(controller.text);
-                            final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
+                            
+                          String name = capitalize(controller.text.trim());
+                          
+                          final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
                      
-                   
                         if (boxInstance.isNotEmpty) {
                           showModalBottomSheet(
                             isScrollControlled: true,
@@ -356,7 +341,36 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                ),
                           );
                         } else {
-                          if (kurdish.map.isEmpty) {
+            
+                          Flushbar(
+                            key:flushBarKey,
+                            borderColor: Colors.white,
+                            showProgressIndicator: true,
+                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
+                            barBlur: 5,
+                            flushbarPosition: FlushbarPosition.TOP,
+                            flushbarStyle: FlushbarStyle.FLOATING,
+                            animationDuration:
+                                const Duration(milliseconds: 400),
+                            reverseAnimationCurve: Curves.easeOut,
+                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 70, vertical: 4),
+                            messageText: Center(
+                              child: Text(
+                                value.language == 'Kurdish' ?'... چاوەڕوانبە':value.language == 'Arabic' ?'... جار التحميل':'loading ...',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ).show(context);
+            
+                          await api.getByName(name,value.language);
+            
+                           (flushBarKey.currentWidget as Flushbar).dismiss();
+            
+                          if (api.map.isEmpty) {
                             Flushbar(
                               duration: const Duration(milliseconds: 2000),
                               borderRadius: BorderRadius.circular(15),
@@ -368,14 +382,8 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                   horizontal: 25, vertical: 2),
                               messageText: Center(
                                 child: Text(
-                                  'Sorry The Drug You Searching Not Found !!',
-                                  style: TextStyle(
-                                      color: Provider.of<SharedPreference>(
-                                                  context,
-                                                  listen: false)
-                                              .darkTheme
-                                          ? Colors.white
-                                          : Colors.black,
+                                  value.language == 'Kurdish' ?'ببورە ئەو دەرمانەی کە بەدوایدا دەگەڕێیت نەدۆزرایەوە':value.language == 'Arabic' ?'آسف لم يتم العثور على الدواء الذي تبحث عنه':'Sorry The Drug You Searching Not Found !!',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 15),
                                 ),
@@ -395,7 +403,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                     ),
                   ],
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(14.0),
                     child: image,
                   ),
                 ),
@@ -414,7 +422,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => ApiDraggableSheet(
-            map: kurdish.map, name: name, imageUrl: image, type: type));
+            map: api.map, name: name, imageUrl: image, type: type));
   }
 }
 

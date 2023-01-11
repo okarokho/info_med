@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:info_med/models/drugs.dart';
+import 'package:info_med/models/second_api.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/pages/home.dart';
 import 'package:info_med/services/provider.dart';
@@ -83,6 +84,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => DataProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Get(),
         ),
       ],
       child: Consumer<SharedPreference>(

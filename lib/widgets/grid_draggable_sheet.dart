@@ -287,31 +287,31 @@ class _MyDraggableSCrollableSheetState
                           child: ListView(
                             controller: scrollController,
                             children: [
-                                value.language == 'Kurdish' ?TitleText(txt: 'ناوی دەرمان:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'اسم الطب:',size: 18,):TitleText(txt: 'Medicine Name:',size: 18,ltr: true),
+                                TitleText(txt: value.language == 'Kurdish' ?'ناوی دەرمان:':value.language == 'Arabic' ?'اسم الطب:':'Medicine Name:',size: 18,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
-                              value.language == 'English' ?TitleText(txt: widget.name,size: 12,ltr: true,):TitleText(txt:widget.name,size: 12,),                              
+                              TitleText(txt: widget.name,size: 16,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 10,
                               ),
-                              value.language == 'Kurdish' ?TitleText(txt: 'دەربارە:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'وصف:',size: 18,):TitleText(txt: 'Description:',size: 18,ltr: true),
+                              TitleText(txt: value.language == 'Kurdish' ?'دەربارە:':value.language == 'Arabic' ?'وصف:':'Description:',size: 18,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
-                              value.language == 'English' ?TitleText(txt: boxInstance.first.description,size: 12,ltr: true,):TitleText(txt:boxInstance.first.description,size: 12,),                              
+                              TitleText(txt: boxInstance.first.description,size: 14,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 10,
                               ),
-                              value.language == 'Kurdish' ?TitleText(txt: 'بەکارهێنان:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'تعليمات:',size: 18,):TitleText(txt: 'Instruction:',size: 18,ltr: true), 
+                              TitleText(txt: value.language == 'Kurdish' ?'بەکارهێنان:':value.language == 'Arabic' ?'تعليمات:':'Instruction:',size: 18,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
-                              value.language == 'English' ?TitleText(txt: boxInstance.first.instruction,size: 12,ltr: true,):TitleText(txt:boxInstance.first.instruction,size: 12,),                              
+                              TitleText(txt: boxInstance.first.instruction,size: 14,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 10,
                               ),
-                              value.language == 'Kurdish' ?TitleText(txt: 'کاریگەری لاوەکی:',size: 18,):value.language == 'Arabic' ?TitleText(txt:'اعراض جانبية:',size: 18,):TitleText(txt: 'Side Effect:',size: 18,ltr: true),      
+                              TitleText(txt: value.language == 'Kurdish' ?'کاریگەرییە لاوەکیەکان:':value.language == 'Arabic' ?'اعراض جانبية:':'Side Effect:',size: 18,ltr: value.language == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -319,9 +319,9 @@ class _MyDraggableSCrollableSheetState
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: 
-                                  sideffect.length ,
+                                sideffect.length ,
                                 itemBuilder: (context, index) => 
-                                value.language == 'English' ?TitleText(txt: '- ${sideffect[index]}',size: 12,ltr: true,):TitleText(txt:'- ${sideffect[index]}',size: 12,),                              
+                                TitleText(txt: '- ${sideffect[index]}',size: 14,ltr: value.language == 'English'?true:false),
                               ),
                               const SizedBox(
                                 height: 10,

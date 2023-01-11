@@ -408,10 +408,11 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                   color: Colors.grey[600],
                                 ),
                                 hintTextDirection: TextDirection.ltr,
-                                hintText:value.language == 'English' ?'Search Medicine...' : value.language == 'Kurdish' ?'گەڕان بەدوای دەرمان...':'بحث الطب...',
+                                hintText:value.language == 'English' ?'Search Medicine...' : value.language == 'Kurdish' ?'...گەڕان بەدوای دەرمان':'...بحث الطب',
                                 hintStyle: const TextStyle(
-                                  
-                                    color: Colors.grey, fontSize: 15),
+                                leadingDistribution: TextLeadingDistribution.even,
+                                height: 1,  
+                                color: Colors.grey, fontSize: 15),
                                 border: InputBorder.none,
                               ),
                               
@@ -453,7 +454,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                           chip(7,6,value.language == 'Kurdish' ?'تێکچوونی خەو':value.language == 'Arabic' ?'إختلال النوم':'Sleep Disorder',widget.sleepDisorder,value.language == 'English' ?'English':'KA'),
                           chip(8,6,value.language == 'Kurdish' ?'چاو':value.language == 'Arabic' ?'‌‌‌‌‌‌‌‌‌عین':'Eye',widget.eye,value.language == 'English' ?'English':'KA'),
                           chip(9,value.language == 'Arabic' ?6:10,value.language == 'Kurdish' ?'گەدە':value.language == 'Arabic' ?'معدة':'Stomach',widget.stomach,value.language == 'English' ?'English':'KA'),
-                          chip(10,value.language == 'Kurdish' ?6:10,value.language == 'Kurdish' ?'دژە خەمؤکی':value.language == 'Arabic' ?'مضاد الاکتئاب':'Anti-depressant',widget.antidepressants,value.language == 'English' ?'English':'KA'),
+                          chip(10,value.language == 'Kurdish' ?6:10,value.language == 'Kurdish' ?'دژە خەمۆکی':value.language == 'Arabic' ?'مضاد الاکتئاب':'Anti-depressant',widget.antidepressants,value.language == 'English' ?'English':'KA'),
                           chip(11,6,value.language == 'Kurdish' ?'پەرکەم':value.language == 'Arabic' ?'اِنتِزاع':'Seizure',widget.seizure,value.language == 'English' ?'English':'KA'),
                           chip(12,value.language == 'Kurdish' ?6:10,value.language == 'Kurdish' ?'ئازارشکێن':value.language == 'Arabic' ?'قاتل الآلام':'Pain Killer',widget.painKiller,value.language == 'English' ?'English':'KA'),
                           chip(13,6,value.language == 'Kurdish' ?'شەکرە':value.language == 'Arabic' ?'السکري':'Diabetes',widget.diabetes,value.language == 'English' ?'English':'KA'),
@@ -473,7 +474,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                     child: widget.filtered.isEmpty &&
                                             controller.text.isEmpty || controller.text==''
                                         ? SizedBox(
-                                            height: widget.listIndex==3 ||  widget.listIndex==9 || widget.listIndex==11?widget.temp.length * 146:widget.listIndex==2 || widget.listIndex==15 || widget.listIndex==10 ?widget.temp.length * 116: widget.listIndex==8 || widget.listIndex==13?widget.temp.length * 180:widget.listIndex==12?widget.temp.length * 132:widget.listIndex==1?widget.temp.length * 39.9:widget.listIndex==4?widget.temp.length * 104.5:widget.listIndex==5 || widget.listIndex==14 ?widget.temp.length * 125:widget.temp.length * 135,
+                                            height: widget.listIndex==3 ||  widget.listIndex==9 || widget.listIndex==11 || widget.listIndex==14?widget.temp.length * 146:widget.listIndex==2 || widget.listIndex==15 || widget.listIndex==10 ?widget.temp.length * 116: widget.listIndex==8 || widget.listIndex==13?widget.temp.length * 180:widget.listIndex==12?widget.temp.length * 132:widget.listIndex==1?widget.temp.length * 39.9:widget.listIndex==4?widget.temp.length * 104.5:widget.listIndex==5 ?widget.temp.length * 125:widget.temp.length * 135,
                                             child: widget.listIndex!=1?GridView.count(
                                               physics:
                                                   const NeverScrollableScrollPhysics(),

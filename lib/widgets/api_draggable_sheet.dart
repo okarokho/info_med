@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/services/database.dart';
-import 'package:info_med/services/shared_preference.dart';
 import 'package:info_med/widgets/my_text.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -247,7 +246,7 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                   sideeffect: widget.map['side'],
                                                   image: widget.imageUrl,
                                                   type: widget.type,
-                                                  language: context.watch<SharedPreference>().language == 'Kurdish' ?'Kurdish':context.watch<SharedPreference>().language == 'Arabic' ?'Arabic':'English');
+                                                  language: widget.map['language'] == 'Kurdish' ?'Kurdish':widget.map['language'] == 'Arabic' ?'Arabic':'English');
                                               db.insert(test.tojson());
                                               context.read<DataProvider>().getDataFavored();
                                             }
@@ -278,31 +277,31 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                           child: ListView(
                             controller: scrollController,
                             children: [
-                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'ناوی دەرمان:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'اسم الطب:',size: 18,):TitleText(txt: 'Medicine Name:',size: 18,ltr: true),
+                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'ناوی دەرمان:':widget.map['language'] == 'Arabic' ?'اسم الطب:':'Medicine Name:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
-                              widget.map['language'] == 'English' ?TitleText(txt: widget.name,size: 12,ltr: true,):TitleText(txt:widget.name,size: 12,),                              
+                              TitleText(txt: widget.name,size: 16,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 10,
                               ),
-                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'دەربارە:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'وصف:',size: 18,):TitleText(txt: 'Description:',size: 18,ltr: true),
+                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'دەربارە:':widget.map['language'] == 'Arabic' ?'وصف:':'Description:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
-                              widget.map['language'] == 'English' ?TitleText(txt: widget.map['description'],size: 12,ltr: true,):TitleText(txt:widget.map['description'],size: 12,),                              
+                              TitleText(txt: widget.map['description'],size: 14,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 10,
                               ),
-                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'بەکارهێنان:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'تعليمات:',size: 18,):TitleText(txt: 'Instruction:',size: 18,ltr: true), 
+                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'بەکارهێنان:':widget.map['language'] == 'Arabic' ?'تعليمات:':'Instruction:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
-                              widget.map['language'] == 'English' ?TitleText(txt: widget.map['instruction'],size: 12,ltr: true,):TitleText(txt:widget.map['instruction'],size: 12,),                              
+                              TitleText(txt: widget.map['instruction'],size: 14,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 10,
                               ),
-                              widget.map['language'] == 'Kurdish' ?TitleText(txt: 'کاریگەری لاوەکی:',size: 18,):widget.map['language'] == 'Arabic' ?TitleText(txt:'اعراض جانبية:',size: 18,):TitleText(txt: 'Side Effect:',size: 18,ltr: true),      
+                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'کاریگەرییە لاوەکیەکان:':widget.map['language'] == 'Arabic' ?'اعراض جانبية:':'Side Effect:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -310,9 +309,9 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: 
-                                  sideffect.length ,
+                                sideffect.length ,
                                 itemBuilder: (context, index) => 
-                                widget.map['language'] == 'English' ?TitleText(txt: '- ${sideffect[index]}',size: 12,ltr: true,):TitleText(txt:'- ${sideffect[index]}',size: 12,),                              
+                                TitleText(txt: '- ${sideffect[index]}',size: 14,ltr: widget.map['language'] == 'English'?true:false),
                               ),
                               const SizedBox(
                                 height: 10,

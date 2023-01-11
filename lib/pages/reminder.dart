@@ -3,6 +3,8 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:info_med/models/db_reminder.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/services/provider.dart';
+import 'package:info_med/services/shared_preference.dart';
+import 'package:info_med/widgets/my_text.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -13,19 +15,35 @@ class Reminder extends StatefulWidget {
    Reminder({super.key});
 List<String> images = [
   'assets/list/capsule.png',
-  'assets/list/cream.png',
-  'assets/list/drops.png',
+  // 'assets/list/cream.png',
+  // 'assets/list/drops.png',
   'assets/list/pills.png',
   'assets/list/syringe.png',
   'assets/list/syrup.png',
 ];
-List<String> labels = [
+List<String> labelsEnglish = [
   'Capsule',
-  'Cream',
-  'Drops',
+  // 'Cream',
+  // 'Drops',
   'Pills',
   'Syringe',
   'Syrup',
+];
+List<String> labelsKurdish = [
+  'کەپسول',
+  // 'Cream',
+  // 'Drops',
+  'حەب',
+  'سرنج',
+  'شروب',
+];
+List<String> labelsArabic = [
+  'کبسولة',
+  // 'Cream',
+  // 'Drops',
+  'حبة',
+  'محقنة',
+  'شراب',
 ];
 static DateTime date = DateTime.now();
   @override
@@ -80,8 +98,8 @@ class _ReminderState extends State<Reminder> {
                 ),
             ),),
             Expanded(
-              child: Consumer<DataProvider>(
-                builder: (context, data, child) {
+              child: Consumer2<DataProvider,SharedPreference>(
+                builder: (context,data,value,child) {
                 return data.listReminder.isNotEmpty? ListView.builder(
                   shrinkWrap: true,
                   itemCount: data.listReminder.length,
@@ -120,7 +138,7 @@ class _ReminderState extends State<Reminder> {
                     ),
                   );
                 },)
-              : const Center(child: Text('No drug to remind'),);
+              :  Center(child: TitleText(txt: value.language == 'Kurdish' ?'هیچ دەرمانێکت نییە بۆ بیرخستنەوە !!':value.language == 'Arabic' ?'لا دواء للتذكير !!':'No Drug to Remind !!',size: 20,ltr: value.language == 'English'?true:false),);
                 },),
             )
             
@@ -140,7 +158,10 @@ class _ReminderState extends State<Reminder> {
               backgroundColor: Colors.transparent,
 
             context: context, 
-            builder: (context) =>  AddMedicine(img: widget.images,lbl: widget.labels),),
+            builder: (context) {
+              final language = context.watch<SharedPreference>().language;
+               return AddMedicine(img: widget.images,lbl:language == 'Kurdish'?widget.labelsKurdish:language == 'Arabic'?widget.labelsArabic:widget.labelsEnglish,language: language);
+            },),
           backgroundColor: Colors.white,
           elevation: 10,
           child: const Icon(Icons.add_alert_rounded,color:Color( 0xff8F00FF),size: 33,),
@@ -158,10 +179,11 @@ class AddMedicine extends StatefulWidget {
     Key? key,
     required this.img,
     required this.lbl,
+    required this.language
   }) : super(key: key);
 List<String> img;
 List<String> lbl;
-
+String language;
   @override
   State<AddMedicine> createState() => _AddMedicineState();
 }
@@ -169,8 +191,16 @@ List<String> lbl;
 class _AddMedicineState extends State<AddMedicine> {
 String? type;
 String? time;
-List<String> listOfType = ['Tabs','Capsule', 'mg', 'ml','cc'];
-List<String> listOfTime = ['After meal','With meal','Before meal'];
+List<String> listOfTypeEnglish = ['Tabs','Capsule', 'mg', 'ml','cc'];
+List<String> listOfTypeArabic = ['Tabs','کبسولة', 'ملغ', 'ملل','cc'];
+List<String> listOfTypeKurdish = ['Tabs','کەپسول', 'ملگ', 'ملل','cc'];
+late List<String> listOfTypeTemp;
+
+List<String> listOfTimeEnglish = ['After meal','With meal','Before meal'];
+List<String> listOfTimeArabic= ['بعد الوجبات','مع الوجبات','قبل الوجبات'];
+List<String> listOfTimeKurdish = ['دوای نان','لەگەڵ نان','پێش نان'];
+late List<String> listOfTimeTemp;
+
 late TextEditingController name;
 late TextEditingController dose;
 int isSelected = 0;
@@ -180,6 +210,8 @@ bool flage=false;
 bool flage2=false;
 @override
   void initState() {
+  listOfTypeTemp = widget.language == 'Kurdish'?listOfTypeKurdish:widget.language == 'Arabic'?listOfTypeArabic:listOfTypeEnglish;
+  listOfTimeTemp = widget.language == 'Kurdish'?listOfTimeKurdish:widget.language == 'Arabic'?listOfTimeArabic:listOfTimeEnglish;
   name= TextEditingController();
   dose= TextEditingController();
     super.initState();
@@ -212,7 +244,7 @@ bool flage2=false;
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 26.0,horizontal: 30),
                   child: SizedBox(
-                    height: 110,
+                    height: 115,
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
@@ -228,7 +260,7 @@ bool flage2=false;
                                         borderRadius: BorderRadius.circular(12.0),
                                         child: Container(
                                           color:  isSelected == index ?Colors.grey[300]:Colors.white,
-                                          height: 75.0,
+                                          height: 80.0,
                                           width: 80.0,
                                           child: Padding(
                                             padding: const EdgeInsets.all(4.0),
@@ -236,7 +268,7 @@ bool flage2=false;
 
                                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
-                                                index==5?Image.asset(widget.img[index],height: 75.9,width: 60,):Image.asset(widget.img[index],),
+                                                index==3?Image.asset(widget.img[index],height: 74.9,width: 60,):Image.asset(widget.img[index],),
                                                 Baseline(baseline: 15, 
                                          baselineType: TextBaseline.alphabetic,
                                          child: Text(widget.lbl[index]),)
@@ -259,7 +291,7 @@ bool flage2=false;
                         child: TextField(
                           maxLines: 1,
                           decoration:  InputDecoration(
-                            labelText: 'Drug Name',
+                            labelText: widget.language == 'Kurdish' ?'ناوی دەرمان':widget.language == 'Arabic' ?'اسم الطب':'Drug Name',
                             
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -286,7 +318,7 @@ bool flage2=false;
                               maxLines: 1,
                               keyboardType: TextInputType.number,
                               decoration:  InputDecoration(
-                                labelText: 'Dose',
+                                labelText: widget.language == 'Kurdish' ?'ژەمە دەرمان':widget.language == 'Arabic' ?'جرعة دواء':'Dose',
                                 
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -308,7 +340,7 @@ bool flage2=false;
                                 borderRadius: BorderRadius.circular(12.0)),
                             child: DropdownButtonFormField(
                               decoration: InputDecoration(
-                            labelText:'Type',
+                            labelText:widget.language == 'Kurdish' ?'جۆر':widget.language == 'Arabic' ?'نوع':'Type',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12), 
                             ),
@@ -327,7 +359,7 @@ bool flage2=false;
                                         return "can't empty";
                                           } else {
                                             return null;}},
-                                  items: listOfType.map((String val) {
+                                  items: listOfTypeTemp.map((String val) {
                                           return DropdownMenuItem(
                                             value: val,
                                             child: Text(val,),);}).toList(),
@@ -347,7 +379,7 @@ bool flage2=false;
                                 borderRadius: BorderRadius.circular(12.0)),
                             child: DropdownButtonFormField(
                               decoration: InputDecoration(
-                            labelText:'When to take',
+                            labelText:widget.language == 'Kurdish' ?'کاتی وەرگرتن':widget.language == 'Arabic' ?'الوقت لآخذ':'When to take',
                             prefixIcon: const Icon(Icons.dinner_dining_rounded),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12), 
@@ -364,10 +396,10 @@ bool flage2=false;
                                               time = value;});},
                                   validator: (String? value) {
                                       if (value!.isEmpty) {
-                                        return "can't empty";
+                                        return widget.language == 'Kurdish' ?'کات دیاری نەکراوە':widget.language == 'Arabic' ?'انها فارغة':"can't empty";
                                           } else {
                                             return null;}},
-                                  items: listOfTime.map((String val) {
+                                  items: listOfTimeTemp.map((String val) {
                                           return DropdownMenuItem(
                                             value: val,
                                             child: Text(val,),);}).toList(),
@@ -390,7 +422,7 @@ bool flage2=false;
                           child: GestureDetector(
                             onTap: () async{
                               final test = await showTimePicker(context: context,
-                            errorInvalidText: 'Invalid Format',
+                            errorInvalidText: widget.language == 'Kurdish' ?'کاتەکە هەڵەیە':widget.language == 'Arabic' ?'الوقت غیر صحیح':'Invalid Format',
                             initialTime: TimeOfDay.now(),
                             initialEntryMode: TimePickerEntryMode.dialOnly
                             
@@ -405,7 +437,7 @@ bool flage2=false;
                               children: [
                                
                                 Text(
-                                  flage2 == true? TimeOfDay(hour:pickedTime!.hour ,minute: pickedTime!.minute).format(context):'No Time',
+                                  flage2 == true? TimeOfDay(hour:pickedTime!.hour ,minute: pickedTime!.minute).format(context):widget.language == 'Kurdish' ?'بەتاڵ':widget.language == 'Arabic' ?'فارغ':'No Time',
                                   style: const TextStyle(
                                       fontSize: 18.0,
                                       color: Colors.black,),
@@ -433,7 +465,7 @@ bool flage2=false;
                               child: GestureDetector(
                                 onTap: () async{
                                   final test = await showDatePicker(context: context,
-                                errorInvalidText: 'Invalid Format',
+                                errorInvalidText: widget.language == 'Kurdish' ?'بەروارەکە هەڵەیە':widget.language == 'Arabic' ?'التاریخ غیر صحیح':'Invalid Format',
                                  initialDate: DateTime.now(),
                                   firstDate: DateTime.now(),
                                   lastDate: DateTime(DateTime.now().year+9));
@@ -447,7 +479,7 @@ bool flage2=false;
                                   children: [
                                    
                                     Text(
-                                      flage == true?DateFormat("dd.MM").format(pickedDate!):'No Date',
+                                      flage == true?DateFormat("dd.MM").format(pickedDate!):widget.language == 'Kurdish' ?'بەتاڵ':widget.language == 'Arabic' ?'فارغ':'No Date',
                                       style: const TextStyle(
                                           fontSize: 18.0,
                                           color: Colors.black,),
@@ -484,16 +516,16 @@ bool flage2=false;
                                               value.insertR(test.tojson(),temp);
                                               context.read<DataProvider>().getDataReminder(Reminder.date);
                                                LocalNotification.showScheduledNotification(
-                                               title: name.text,
-                                               body: 'Time to take your Medication',
-                                              time: temp);
+                                               title: name.text.trim(),
+                                               body: widget.language == 'Kurdish' ?'! کاتی وەرگرتنی دەرمانەکەتە':widget.language == 'Arabic' ?'! الوقت الاتخاذ الدواء':'Time to take your Medication !',
+                                               timeFuture: temp);
                                                Navigator.of(context).pop();
                     },                          
                     style:  ElevatedButton.styleFrom(
                         
                           fixedSize:const Size(400,40) 
                     ),
-                     child: const Text('Save',style: TextStyle(fontSize: 18),)),
+                     child: Text(widget.language == 'Kurdish' ?'خەزن بکە':widget.language == 'Arabic' ?'حفظ':'Save',style: const TextStyle(fontSize: 18),)),
                   ),
                 )
 

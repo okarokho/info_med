@@ -1,18 +1,26 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:info_med/services/translator.dart';
 
-class Get {
+class Get with ChangeNotifier{
   List side = [];
   String description = '';
   String instruction = '';
   String name = '';
+  bool isLoading = false;
   Map<String,dynamic> map={};
   late Translation translate;
   Get() {
     translate = Translation();
   }
-  getByName(String search) async {
+  
+  toggle(){
+    isLoading=!isLoading;
+    notifyListeners();
+  }
+
+  getByName(String search,String language) async {
     final url = Uri.parse(
         'https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.69&mainSearchCriteria.v.dn=$search&informationRecipient.languageCode.c=en');
 
@@ -24,10 +32,10 @@ class Get {
             '#results-body > div > div:nth-child(1) > p > span > a')
         .map((e) => e.innerHtml)
         .first;
-    await _getWebsiteData(link);
+    await _getWebsiteData(link , language);
   }
 
-  Future _getWebsiteData(String link) async {
+  Future _getWebsiteData(String link,String language) async {
     final url = Uri.parse(link);
     //a604028  -  a696015  -   a682878
 
@@ -40,7 +48,7 @@ class Get {
         .toList();
 
     for (int i = 0; i < side.length; i++) {
-      side[i] = await translate.translateKurdish(side[i]);
+      if(language != 'English') side[i] = language == 'Kurdish' ?await translate.translateKurdish(side[i]): await translate.translateArabic(side[i]);
     }
 
 map.putIfAbsent('side', () => side.toString());
@@ -58,8 +66,10 @@ map.putIfAbsent('side', () => side.toString());
                     .length -
                 1);
 
-    description = await translate.translateKurdish(description);
+if(language != 'English') description = language == 'Kurdish' ?await translate.translateKurdish(description): await translate.translateArabic(description);
+
 map.putIfAbsent('description', () => description);
+
     instruction = html
         .querySelectorAll('#section-2 > p:nth-child(1)')
         .map((e) => e.innerHtml)
@@ -71,9 +81,12 @@ map.putIfAbsent('description', () => description);
                     .map((e) => e.innerHtml)
                     .toString()
                     .length -
+     
                 1);
-    instruction = await translate.translateKurdish(instruction);
+if(language != 'English') instruction = language == 'Kurdish' ? await translate.translateKurdish(instruction): await translate.translateArabic(instruction);
+
 map.putIfAbsent('instruction', () => instruction);
+
     name = html
         .querySelectorAll(
             '#mplus-content > article > div.page-info > div.page-title > h1')
@@ -89,6 +102,6 @@ map.putIfAbsent('instruction', () => instruction);
                     .length -
                 1);
                 map.putIfAbsent('name', () => name);
-
+                map.putIfAbsent('language', () => language);
   }
 }

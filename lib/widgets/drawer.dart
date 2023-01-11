@@ -13,7 +13,7 @@ class MyDrawer extends StatefulWidget {
 class _MyDrawerState extends State<MyDrawer> {
   final theme = SharedPreference();
   Image? image;
-List<String> listOfLang = ['Kurdish','English','Arabic'];
+List<String> listOfLang = ['کوردی','English','عربي'];
   @override
   void initState() {
     super.initState();
@@ -38,7 +38,7 @@ List<String> listOfLang = ['Kurdish','English','Arabic'];
             child: image ,
           ),
         ),
-        Consumer<SharedPreference>(
+        /*Consumer<SharedPreference>(
           builder: (context, value, child) => ListTile(
               horizontalTitleGap: 90.0,
               leading: value.darkTheme
@@ -59,33 +59,35 @@ List<String> listOfLang = ['Kurdish','English','Arabic'];
                   },
                 ),
               )),
-        ),
+        ),*/
+        const SizedBox(height: 20,),
          Consumer<SharedPreference>(
-          builder: (context, language, child) => ListTile(
+          builder: (context, language, child) {
+            return ListTile(
             horizontalTitleGap: 80.0,
-            leading: const Icon(Icons.language_rounded, color: Colors.black),
+            leading: const Icon(Icons.language_rounded,size: 40 ,color: Color( 0xff8F00FF)),
             title: Padding(
                         padding: const EdgeInsets.only(left: 35),
                         child: Container(
-                              height: 59,
+                              height: 64,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0)),
+                              borderRadius: BorderRadius.circular(12.0)),
                               child: DropdownButtonFormField(
-                                decoration: InputDecoration(
-                              labelText:'Language',
+                              decoration: InputDecoration(
+                              labelText:language.language == 'Kurdish' ? 'زمان' : language.language == 'Arabic' ? 'لغة' : 'Language',
                               border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                                    value: language.language,
+                                    value: language.language == 'Kurdish' ? 'کوردی' : language.language == 'Arabic' ? 'عربي' : 'English',
                                     borderRadius: BorderRadius.circular(12),
                                     isExpanded: true,
                                     onChanged: (value) {
                                             setState(() {
-                                               language.setLanguage(value!);});},
-                                               onSaved: (value) {
+                                               language.setLanguage(value == 'کوردی' ? 'Kurdish' : value == 'English' ? 'English' : 'Arabic');});},
+                                    onSaved: (value) {
                                                  setState(() {
-                                               language.setLanguage(value!);});
+                                               language.setLanguage(value == 'کوردی' ? 'Kurdish' : value == 'English' ? 'English' : 'Arabic');});
                                                },
                                     
                                     items: listOfLang.map((String val) {
@@ -95,28 +97,9 @@ List<String> listOfLang = ['Kurdish','English','Arabic'];
                    )
                             ),
                       ),
-                 ),
+                 );
+          }
          ),
-        const ListTile(
-          horizontalTitleGap: 120.0,
-          leading: Icon(Icons.notifications, color: Colors.black),
-          title: Text('Request', style: TextStyle(color: Colors.black)),
-        ),
-        const Divider(
-          height: 30,
-          color: Colors.black,
-          thickness: 2,
-        ),
-        const ListTile(
-          horizontalTitleGap: 120.0,
-          leading: Icon(Icons.settings, color: Colors.black),
-          title: Text('Settings', style: TextStyle(color: Colors.black)),
-        ),
-        const ListTile(
-          horizontalTitleGap: 120.0,
-          leading: Icon(Icons.exit_to_app, color: Colors.black),
-          title: Text('Exit', style: TextStyle(color: Colors.black)),
-        ),
       ]),
     );
   }

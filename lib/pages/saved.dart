@@ -51,8 +51,7 @@ class _SavedState extends State<Saved> {
                 ),
               )
               :  Center(
-                  child:language.language == 'Kurdish' ?TitleText(txt: 'هیچ دەرمانێک نەدۆزرایەوە',size: 18,):language.language == 'Arabic' ?TitleText(txt:'لم يتم العثور على معلومات',size: 18,):TitleText(txt: 'No information founded',size: 18,ltr: true),
-                )
+                  child:TitleText(txt: language.language == 'Kurdish' ?'هیچ دەرمانێک نەدۆزرایەوە':language.language == 'Arabic' ?'لم يتم العثور على معلومات':'No information founded',size: 20,ltr: language.language == 'English'?true:false),                )
         ],
       );
     });
