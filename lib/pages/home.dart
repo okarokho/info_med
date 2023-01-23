@@ -49,9 +49,8 @@ class _HomeState extends State<Home> {
           height: 80,
            child: Consumer<SharedPreference>(
               builder: (context, value, child) =>  BottomNavigationBar(
-                elevation:10,
-                
-                backgroundColor: Colors.grey[100],
+                elevation: 10,
+                backgroundColor: Colors.grey[00],
                 type: BottomNavigationBarType.fixed,
                 currentIndex: currentIndex,
                 selectedItemColor:
@@ -126,7 +125,13 @@ class _HomeState extends State<Home> {
                       label:value.language == 'Kurdish' ?'چاودێری':value.language == 'Arabic' ?'تتبع':'Tracking',),
                       BottomNavigationBarItem(
                       activeIcon: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+
+                          //    setState(() {
+                          //   currentIndex = 4;
+                          // });
+
+                          },
                           icon: const Icon(Icons.access_time_filled_rounded, size: 35)),
                       icon: IconButton(
                         onPressed: () {

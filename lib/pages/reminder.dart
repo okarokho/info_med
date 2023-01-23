@@ -65,7 +65,7 @@ class _ReminderState extends State<Reminder> {
     return Stack(
       children: [
         Container(
-          color: Colors.lightGreen,
+          color: Colors.white,
         ),
         SafeArea(
           child: Column(
@@ -74,7 +74,7 @@ class _ReminderState extends State<Reminder> {
             width: 345,
             margin: const EdgeInsets.symmetric( horizontal: 23,vertical: 14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(10)
             ),
             child: Padding(
@@ -90,6 +90,7 @@ class _ReminderState extends State<Reminder> {
           initialSelectedDate: DateTime.now(),
           selectionColor:const Color( 0xff8F00FF),
           selectedTextColor: Colors.white,
+          daysCount: 31,
           dateTextStyle: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -156,7 +157,6 @@ class _ReminderState extends State<Reminder> {
               isDismissible: false,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-
             context: context, 
             builder: (context) {
               final language = context.watch<SharedPreference>().language;

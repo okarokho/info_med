@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:info_med/models/drugs.dart';
+import 'package:info_med/models/image.dart';
 import 'package:info_med/models/second_api.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/pages/home.dart';
@@ -31,15 +32,29 @@ Future<void> main() async {
   ]
   );
   
-  Hive.registerAdapter(DrugsAdapter());
 
+
+  Hive.registerAdapter(DrugsAdapter());
 final directory = await getApplicationDocumentsDirectory();
 final fileKurdish = File('${directory.path}/$kurdishDB');
 final fileEnglish = File('${directory.path}/$englishDB');
 final fileArabic = File('${directory.path}/$arabicDB');
-final kexists = await fileKurdish.exists();
-final aexists = await fileArabic.exists();
-final eexists = await fileEnglish.exists();
+
+existk() async {
+ return  await fileKurdish.exists();
+}
+exista() async {
+ return  await fileArabic.exists();
+}
+existe() async {
+ return  await fileEnglish.exists();
+}
+
+final result = await Future.wait([existk(),exista(),existe()]);
+final kexists = result[0];
+final aexists = result[1];
+final eexists = result[2];
+
 if (!kexists) {
   final data = await rootBundle.load('assets/data/$kurdishDB');
   final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -59,6 +74,8 @@ if (!eexists) {
   await Hive.openBox<Drugs>('drugs');
   await Hive.openBox<Drugs>('drug');
   await Hive.openBox<Drugs>('druges');
+
+  Img();
 
   runApp(const MyApp());
 }

@@ -29,7 +29,7 @@ class _SavedState extends State<Saved> {
         children: [
           Container(
             height: double.infinity,
-            color: Colors.lightGreen,
+            color: Colors.white,
             // child: Image.asset(
             //   'assets/images/download.png',
             //   fit: BoxFit.cover,
@@ -67,7 +67,7 @@ class _SavedState extends State<Saved> {
           child:  ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              color: Colors.white,
+              color: Colors.grey[200],
               child: ListTile(
                 leading: Text(
                   list[index].name.toString(),

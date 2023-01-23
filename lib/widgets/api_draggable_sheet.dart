@@ -4,11 +4,10 @@ import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:info_med/models/image.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/widgets/my_text.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +24,6 @@ class ApiDraggableSheet extends StatefulWidget {
       required this.type});
   String name;
   String type;
-  
 
   Map<String, dynamic> map = {};
   String imageUrl;
@@ -36,7 +34,6 @@ class ApiDraggableSheet extends StatefulWidget {
 class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
   bool toggle = false;
   List<DbData> names = [];
-// ignore: non_constant_identifier_names
   Future initilize() async {
     names = await databaseHelper.instance.select();
     setState(() {
@@ -116,26 +113,16 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                         .contained *
                                                     4,
                                               ),
-                                              Positioned(
+                                              widget.type != 's' ?Positioned(
                                                 right: 0,
                                                 top: 30,
                                                 child: PopupMenuButton(
                                                   onSelected: (value) async {
-                                                    if (value == 'd') {
-                                                      if (widget.type == 's') {
-                                                        final file =
-                                                            await getImageFileFromAssets(
-                                                                widget
-                                                                    .imageUrl);
+                                                    if (value == 'd') {                                                      
+
                                                         await GallerySaver
-                                                            .saveImage(
-                                                                file.path);
-                                                      } else {
-                                                        await GallerySaver
-                                                            .saveImage(widget
-                                                                .imageUrl);
-                                                      }
-                                                      Flushbar(
+                                                            .saveImage(widget.imageUrl);
+                                                            Flushbar(
                                                         backgroundColor:
                                                             Colors.black,
                                                         duration:
@@ -150,6 +137,7 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                                   Colors.white),
                                                         )),
                                                       ).show(context);
+                                                      
                                                     }
                                                   },
                                                   itemBuilder: (context) => [
@@ -163,14 +151,14 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                              )
+                                              ):Container(),
                                             ],
                                           );
                                         },
                                       );
                                     },
                                     child: getImage(
-                                        widget.imageUrl, widget.type, 'n')),
+                                        widget.imageUrl, widget.type, 'x')),
                               ),
                             ),
                             Baseline(
@@ -215,20 +203,7 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color:
-                                            Colors.grey[200]!.withOpacity(0.9),
-                                        shape: BoxShape.circle),
-                                    child: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.of(context).pop();
-                                          });
-                                        },
-                                        color: Colors.black,
-                                        icon: const Icon(Icons.close_rounded)),
-                                  ),
+                                  
                                   Container(
                                     decoration: BoxDecoration(
                                         color:
@@ -263,6 +238,20 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                 Icons.favorite_border_rounded,
                                                 size: 26,
                                               )),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color:
+                                            Colors.grey[200]!.withOpacity(0.9),
+                                        shape: BoxShape.circle),
+                                    child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        color: Colors.black,
+                                        icon: const Icon(Icons.close_rounded)),
                                   ),
                                 ],
                               ),
@@ -361,23 +350,21 @@ getImage(String url, String type, String imgprovider) {
     default:
       {
         if (imgprovider == 'imgp') {
-          return AssetImage(url);
+          return  Img.imagep!;
         } else {
-          return Image.asset(
-            url,
-            fit: BoxFit.cover,
-          );
+          return Img.image;
         }
       }
   }
 }
 
-Future<File> getImageFileFromAssets(String path) async {
-  final byteData = await rootBundle.load(path);
-
-  final file = File('${(await getTemporaryDirectory()).path}/$path');
-  await file.writeAsBytes(byteData.buffer
-      .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-  return file;
-}
+// Future getImageFileFromAssets(String path) async {
+//   final byteData = await rootBundle.load(path);
+//   final file = await File('${(await getTemporaryDirectory()).path}/image.jpg').create(recursive: true);
+//   await file.writeAsBytes(byteData.buffer
+//       .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+//   await channel.invokeMethod(
+//       'saveImage',
+//       <String, dynamic>{'path': file.path, 'albumName': null, 'toDcim': false},
+//     );
+// }

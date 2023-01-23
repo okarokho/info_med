@@ -1,24 +1,20 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 
-import 'dart:io';
-import 'dart:math';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/services/database.dart';
 import 'package:info_med/models/db_data.dart';
 import 'package:info_med/services/shared_preference.dart';
 import 'package:info_med/widgets/my_text.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 import '../models/box.dart';
+import '../models/image.dart';
 import '../services/provider.dart';
 
 class MyDraggableSCrollableSheet extends StatefulWidget {
@@ -33,8 +29,8 @@ class _MyDraggableSCrollableSheetState
     extends State<MyDraggableSCrollableSheet> {
   bool toggle = false;
   List<DbData> names = [];
- 
-
+  ImageProvider? image;
+  bool isAsset = false;
   Future initilize() async {
     
     names = await databaseHelper.instance.select();
@@ -58,6 +54,7 @@ class _MyDraggableSCrollableSheetState
   void initState() {
     super.initState();
     initilize();
+    image = Img.imagep;
   }
 
   @override
@@ -108,7 +105,7 @@ class _MyDraggableSCrollableSheetState
                                           return Stack(
                                             children: [
                                               PhotoView(
-                                                imageProvider: NetworkImage(
+                                                imageProvider: isAsset == true ? image :NetworkImage(
                                                   boxInstance.first.image.toString(),
                                                 ),
                                                 minScale: PhotoViewComputedScale
@@ -117,22 +114,17 @@ class _MyDraggableSCrollableSheetState
                                                         .contained *
                                                     4,
                                               ),
-                                              Positioned(
+                                               isAsset == false? Positioned(
                                                 right: 0,
                                                 top: 30,
                                                 child: PopupMenuButton(
                                                   onSelected: (value) async {
                                                     if (value == 'd') {
-                                                      final tempDir =
-                                                          await getTemporaryDirectory();
-                                                      final path =
-                                                          '${tempDir.path}/image.jpg';
-                                                      await Dio().download(
-                                                          boxInstance.first.image.toString(),
-                                                          path);
-                                                      await GallerySaver
-                                                          .saveImage(path);
-                                                      Flushbar(
+                                                      if (value == 'd') {
+                                                      
+                                                        await GallerySaver
+                                                          .saveImage(boxInstance.first.image.toString());
+                                                        Flushbar(
                                                         backgroundColor:
                                                             Colors.black,
                                                         duration:
@@ -147,7 +139,11 @@ class _MyDraggableSCrollableSheetState
                                                                   Colors.white),
                                                         )),
                                                       ).show(context);
+                                                      
+                                                     }
                                                     }
+                                                     
+                                                  
                                                   },
                                                   itemBuilder: (context) => [
                                                     const PopupMenuItem(
@@ -160,7 +156,7 @@ class _MyDraggableSCrollableSheetState
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                              )
+                                              ):Container(),
                                             ],
                                           );
                                         },
@@ -172,11 +168,13 @@ class _MyDraggableSCrollableSheetState
                                           const Center(
                                               child:
                                                   CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        'assets/images/drug_bottle.jpg',
-                                        fit: BoxFit.cover,
-                                      ),
+                                      errorWidget: (context, url, error) {
+                                      
+                                          isAsset = true;
+
+                                        return Image(image: image!,fit: BoxFit.cover);
+                                      },
+
                                       fit: BoxFit.cover,
                                       key: UniqueKey(),
                                     ),
@@ -223,20 +221,7 @@ class _MyDraggableSCrollableSheetState
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color:
-                                            Colors.grey[200]!.withOpacity(0.9),
-                                        shape: BoxShape.circle),
-                                    child: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.of(context).pop();
-                                          });
-                                        },
-                                        color: Colors.black,
-                                        icon: const Icon(Icons.close_rounded)),
-                                  ),
+                                  
                                   Container(
                                     decoration: BoxDecoration(
                                         color:
@@ -253,7 +238,7 @@ class _MyDraggableSCrollableSheetState
                                                   instruction: boxInstance.first.instruction.toString(),
                                                   sideeffect: boxInstance.first.side_effect.toString(),
                                                   image:boxInstance.first.image.toString(),
-                                                  type: 'n',
+                                                  type: isAsset ==true ?'s':'n',
                                                   language: value.language == 'Kurdish' ?'Kurdish':value.language == 'Arabic' ?'Arabic':'English');
                                               db.insert(test.tojson());
                                               context.read<DataProvider>().getDataFavored();
@@ -273,6 +258,20 @@ class _MyDraggableSCrollableSheetState
                                                 size: 26,
                                               )),
                                   ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color:
+                                            Colors.grey[200]!.withOpacity(0.9),
+                                        shape: BoxShape.circle),
+                                    child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        color: Colors.black,
+                                        icon: const Icon(Icons.close_rounded)),
+                                  )
                                 ],
                               ),
                             ),
@@ -340,13 +339,10 @@ class _MyDraggableSCrollableSheetState
   }
 }
 
-Future<File> urlToFile(String imageUrl) async {
-  var rng = Random();
-  Directory tempDir = await getTemporaryDirectory();
-  String tempPath = tempDir.path;
-  File file = File('$tempPath${rng.nextInt(100)}.png');
-  final url = Uri.parse(imageUrl);
-  http.Response response = await http.get(url);
-  await file.writeAsBytes(response.bodyBytes);
-  return file;
-}
+// Future<File> getImageFileFromAssets(String path) async {
+//   final byteData = await rootBundle.load(path);
+//   final file = File('${(await getTemporaryDirectory()).path}/image.jpg');
+//   await file.writeAsBytes(byteData.buffer
+//       .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+//   return file;
+// }

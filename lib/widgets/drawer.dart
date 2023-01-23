@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/image.dart';
 import '../services/shared_preference.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -17,8 +19,11 @@ List<String> listOfLang = ['کوردی','English','عربي'];
   @override
   void initState() {
     super.initState();
-    image = Image.asset('assets/images/drug_bottle.jpg');
+    image = Img.image;
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +32,14 @@ List<String> listOfLang = ['کوردی','English','عربي'];
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-            topRight: Radius.circular(70), bottomRight: Radius.circular(70)),
+            topRight: Radius.circular(70), bottomRight: Radius.circular(20)),
       ),
       child: Column(children: [
         SizedBox(
           height: 203,
           child: ClipRRect(
             borderRadius:
-                const BorderRadius.only(topRight: Radius.circular(70)),
+                const BorderRadius.only(topRight: Radius.circular(20)),
             child: image ,
           ),
         ),

@@ -21,7 +21,7 @@ class MyAppBar extends StatelessWidget with PreferredSizeWidget {
               width: 50,
               decoration:  BoxDecoration(
                  
-                  color: Colors.grey[100],
+                  color: Colors.grey[200],
                   // Provider.of<SharedPreference>(context).darkTheme
                   //     ? Colors.black
                   //     : Colors.white
@@ -46,7 +46,7 @@ class MyAppBar extends StatelessWidget with PreferredSizeWidget {
           borderRadius: BorderRadius.circular(1000),
           child: Container(
             decoration:  BoxDecoration(
-                color: Colors.grey[100],
+                color: Colors.grey[200],
                 shape: BoxShape.circle),
             child: IconButton(
               splashRadius: 1,

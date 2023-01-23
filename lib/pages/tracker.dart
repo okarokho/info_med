@@ -14,7 +14,7 @@ class _TrackingState extends State<Tracking> {
       children: [
         Container(
           
-          color: Colors.lightGreen,
+          color: Colors.white,
         )
       ],
     );

@@ -367,7 +367,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
   Widget build(BuildContext context) {
               return Consumer<SharedPreference>(
                 builder: (context, value, child) => Container(
-                  color: Colors.lightGreen,
+                  color: Colors.white,
                   child: CustomScrollView(
                     keyboardDismissBehavior:
                         ScrollViewKeyboardDismissBehavior.onDrag,
@@ -375,7 +375,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                     slivers: [
                       SliverAppBar(
                         automaticallyImplyLeading: false,
-                        toolbarHeight: 60.7 + kToolbarHeight,
+                        toolbarHeight: 40.7 + kToolbarHeight,
                         centerTitle: true,
                         // flexibleSpace: RotatedBox(
                         //   quarterTurns: 3,
@@ -388,15 +388,15 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         //     ),
                         //   ),
                         // ),
-                        backgroundColor: Colors.lightGreen,
+                        backgroundColor: Colors.white,
                         title: Padding(
                           padding: const EdgeInsets.only(
-                              left: 45, right: 45, bottom: 45),
+                              left: 45, right: 45, bottom: 15),
                           child: Container(
                             height: 46,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey[600]!),
-                                color: Colors.white,
+                                color: Colors.grey[100],
                                 borderRadius: BorderRadius.circular(50.0)),
                             child: TextField(
                               maxLines: 1,
@@ -408,7 +408,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                   color: Colors.grey[600],
                                 ),
                                 hintTextDirection: TextDirection.ltr,
-                                hintText:value.language == 'English' ?'Search Medicine...' : value.language == 'Kurdish' ?'...گەڕان بەدوای دەرمان':'...بحث الطب',
+                                hintText:value.language == 'English' ?'Search Medicine ...' : value.language == 'Kurdish' ?'... گەڕان بەدوای دەرمان':'... بحث الطب',
                                 hintStyle: const TextStyle(
                                 leadingDistribution: TextLeadingDistribution.even,
                                 height: 1,  
@@ -439,7 +439,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         child: Column(
                           children: [
                              Container(
-                              color:  Colors.lightGreen,
+                              color:  Colors.white,
                       height: 196,
                       width: double.infinity,
                       child: Wrap(
@@ -470,7 +470,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                               children: [
                                 
                                     Container(
-                                    color: Colors.lightGreen,
+                                    color: Colors.white,
                                     child: widget.filtered.isEmpty &&
                                             controller.text.isEmpty || controller.text==''
                                         ? SizedBox(
@@ -516,7 +516,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                                 return ClipRRect(
                                                   borderRadius: BorderRadius.circular(12),
                                                   child: Container(
-                                                    color: Colors.white,
+                                                    color: Colors.grey[200],
                                                     child: ListTile(
                                                      leading:  const Icon(Icons.medication_liquid_rounded,color:Color( 0xff8F00FF)),
                                                      horizontalTitleGap: 0,
@@ -621,10 +621,13 @@ class MyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+
       shape: RoundedRectangleBorder(
+
+        
           borderRadius:
               BorderRadius.circular(12)),
-      elevation: 2,
+      elevation: 4,
       child: Column(
         children: [
           Stack(
