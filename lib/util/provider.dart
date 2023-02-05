@@ -3,7 +3,7 @@ import 'package:info_med/models/db_data.dart';
 import 'package:intl/intl.dart';
 
 import '../models/db_reminder.dart';
-import 'package:info_med/services/database.dart';
+import 'package:info_med/util/database.dart';
 
 class DataProvider with ChangeNotifier{
   List<DbReminder> listReminder = [];

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:info_med/services/shared_preference.dart';
+import 'package:info_med/util/shared_preference.dart';
 import 'package:info_med/widgets/grid_draggable_sheet.dart';
 import 'package:provider/provider.dart';
 

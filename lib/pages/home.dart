@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:info_med/pages/mainscreen.dart';
 import 'package:info_med/pages/reminder.dart';
 import 'package:info_med/pages/saved.dart';
-import 'package:info_med/pages/tracker.dart';
+import 'package:info_med/pages/tracking/tracker.dart';
 import 'package:info_med/widgets/appbar.dart';
 import 'package:info_med/widgets/custom_fab.dart';
 import 'package:info_med/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 
-import '../services/shared_preference.dart';
+import '../util/shared_preference.dart';
 
 
 // ignore: must_be_immutable
@@ -22,7 +22,7 @@ class Home extends StatefulWidget with ChangeNotifier {
 }
 
 class _HomeState extends State<Home> {
-  int currentIndex = 0;
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
                 elevation: 10,
                 backgroundColor: Colors.grey[00],
                 type: BottomNavigationBarType.fixed,
-                currentIndex: currentIndex,
+                currentIndex: _currentIndex,
                 selectedItemColor:
                     value.darkTheme
                         ? Colors.white
@@ -65,40 +65,30 @@ class _HomeState extends State<Home> {
                 selectedFontSize: 12,
            
                 items: [
+                  // main
                   BottomNavigationBarItem(
-                    
-                      activeIcon: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.home_rounded,
-                            size: 35,
-                          )),
                       icon: IconButton(
                         onPressed: () {
                           setState(() {
-                            currentIndex = 0;
+                            _currentIndex = 0;
                           });
                         },
-                        icon: const Icon(Icons.home_outlined, size: 35),
+                        icon: Icon(_currentIndex == 0 ? Icons.home_rounded : Icons.home_outlined, size: 35,),
                       ),
                       label:value.language == 'Kurdish' ?'سەرەکی':value.language == 'Arabic' ?'رئیسي':'Home',),
-                        BottomNavigationBarItem(
-                      activeIcon: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.favorite_rounded, size: 35)),
+                  // saved
+                  BottomNavigationBarItem(
                       icon: IconButton(
                         onPressed: () {
                           setState(() {
-                            currentIndex = 1;
+                            _currentIndex = 1;
                           });
                         },
-                        icon:
-                            const Icon(Icons.favorite_outline_rounded, size: 35),
+                        icon: Icon(_currentIndex ==1 ? Icons.favorite_rounded : Icons.favorite_outline_rounded, size: 35),
                       ),
                       label:value.language == 'Kurdish' ?'دڵخوازەکان':value.language == 'Arabic' ?'مفضل':'Saved',),
-                       
+                  // blank    
                   const BottomNavigationBarItem(
-           
                       icon: Icon(
                         
                           Icons.expand_more_rounded,
@@ -106,49 +96,33 @@ class _HomeState extends State<Home> {
                           size: 10,
                         ),
                       label: ''),
-                
-                      BottomNavigationBarItem(
-                      activeIcon: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.timeline_rounded,
-                            size: 35,
-                          )),
+                  // tracking
+                  BottomNavigationBarItem(
                       icon: IconButton(
                         onPressed: () {
                           setState(() {
-                            currentIndex = 3;
+                            _currentIndex = 3;
                           });
                         },
-                        icon: const Icon(Icons.timeline_rounded, size: 35),
+                        icon: Icon(_currentIndex == 3 ? Icons.timeline_rounded : Icons.timeline_rounded, size: 35),
                       ),
                       label:value.language == 'Kurdish' ?'چاودێری':value.language == 'Arabic' ?'تتبع':'Tracking',),
-                      BottomNavigationBarItem(
-                      activeIcon: IconButton(
-                          onPressed: () {
-
-                          //    setState(() {
-                          //   currentIndex = 4;
-                          // });
-
-                          },
-                          icon: const Icon(Icons.access_time_filled_rounded, size: 35)),
+                  // reminder
+                  BottomNavigationBarItem(
                       icon: IconButton(
                         onPressed: () {
                           setState(() {
-                            currentIndex = 4;
+                            _currentIndex = 4;
                           });
                         },
-                        icon:
-                            const Icon(Icons.access_time_rounded, size: 35),
+                        icon: Icon(_currentIndex ==4 ? Icons.access_time_filled_rounded : Icons.access_time_rounded, size: 35),
                       ),
                       label:value.language == 'Kurdish' ?'بیرخستنەوە':value.language == 'Arabic' ?'تذکیر':'Reminder',),
-                      
                 ]),
         ),
          ),
        ),
-      body: currentIndex == 0 ? Main() : currentIndex == 1 ? const Saved() :  currentIndex == 3 ? const Tracking() :  Reminder(),
+      body: _currentIndex == 0 ? Main() : _currentIndex == 1 ? const Saved() :  _currentIndex == 3 ? const Tracking() :  Reminder(),
     );
     
   }

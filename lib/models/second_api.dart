@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
-import 'package:info_med/services/translator.dart';
+import 'package:info_med/util/translator.dart';
 
 class Get with ChangeNotifier{
   List side = [];

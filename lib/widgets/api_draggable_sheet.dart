@@ -6,13 +6,13 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/models/image.dart';
-import 'package:info_med/services/database.dart';
+import 'package:info_med/util/database.dart';
 import 'package:info_med/widgets/my_text.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
 import '../models/db_data.dart';
-import '../services/provider.dart';
+import '../util/provider.dart';
 
 // ignore: must_be_immutable
 class ApiDraggableSheet extends StatefulWidget {

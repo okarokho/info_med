@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:info_med/models/db_reminder.dart';
-import 'package:info_med/services/database.dart';
-import 'package:info_med/services/provider.dart';
-import 'package:info_med/services/shared_preference.dart';
+import 'package:info_med/util/database.dart';
+import 'package:info_med/util/provider.dart';
+import 'package:info_med/util/shared_preference.dart';
 import 'package:info_med/widgets/my_text.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../services/notification.dart';
+import '../util/notification.dart';
 
 // ignore: must_be_immutable
 class Reminder extends StatefulWidget {

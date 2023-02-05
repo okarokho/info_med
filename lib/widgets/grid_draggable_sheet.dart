@@ -6,16 +6,16 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:info_med/services/database.dart';
+import 'package:info_med/util/database.dart';
 import 'package:info_med/models/db_data.dart';
-import 'package:info_med/services/shared_preference.dart';
+import 'package:info_med/util/shared_preference.dart';
 import 'package:info_med/widgets/my_text.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
 import '../models/box.dart';
 import '../models/image.dart';
-import '../services/provider.dart';
+import '../util/provider.dart';
 
 class MyDraggableSCrollableSheet extends StatefulWidget {
   MyDraggableSCrollableSheet({super.key, required this.name});

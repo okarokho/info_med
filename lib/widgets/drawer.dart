@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/image.dart';
-import '../services/shared_preference.dart';
+import '../util/shared_preference.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
