@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:info_med/l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final darkTheme = ThemeData(
   primaryColor: Colors.black,
   brightness: Brightness.dark,
-  backgroundColor: const Color(0xFF202020),
-  dividerColor: Colors.white,
-    primarySwatch: Colors.deepPurple,
+  dividerColor: Colors.white, colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(background: const Color(0xFF202020)),
 
   // colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey)
   //     .copyWith(secondary: Colors.white),
@@ -14,20 +13,17 @@ final darkTheme = ThemeData(
 
 final lightTheme = ThemeData(
   primaryColor: Colors.white,
-  primarySwatch: Colors.deepPurple,
   brightness: Brightness.light,
-  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-  dividerColor: Colors.black,
-  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey)
-      .copyWith(secondary: Colors.black),
+  dividerColor: Colors.black, colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey)
+      .copyWith(secondary: Colors.black).copyWith( background: const Color.fromARGB(255, 255, 255, 255)),
 );
 
 class SharedPreference with ChangeNotifier {
   SharedPreferences? _prefs;
   bool _darkTheme = false;
-  String _language='Kurdish';
+  Locale _language=L10n.all[2];
   bool get darkTheme => _darkTheme;
-  String get language => _language;
+  Locale get language => _language;
 
   SharedPreference() {
     
@@ -54,7 +50,16 @@ class SharedPreference with ChangeNotifier {
     await _initialize();
     final SharedPreferences laguagePrefs = _prefs!;
     laguagePrefs.setString('lan', x);
-    _language = x;
+    switch (x) {
+      case 'کوردی':
+        _language =  L10n.all[2];
+        break;
+      case 'English':
+        _language =  L10n.all[0];
+        break;
+      default:
+        _language =  L10n.all[1];
+    }
     notifyListeners();
   }
 
@@ -62,7 +67,17 @@ class SharedPreference with ChangeNotifier {
   _getLanguage() async {
     await _initialize();
     final SharedPreferences laguagePrefs = _prefs!;
-    _language = laguagePrefs.getString('lan') ?? 'Kurdish';
+    String x = laguagePrefs.getString('lan') ?? 'English';
+    switch (x) {
+      case 'کوردی':
+        _language =  L10n.all[2];
+        break;
+      case 'English':
+        _language =  L10n.all[0];
+        break;
+      default:
+        _language =  L10n.all[1];
+    }
     notifyListeners();
   }
 

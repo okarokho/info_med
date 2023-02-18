@@ -15,29 +15,28 @@ class databaseHelper with ChangeNotifier {
   static const _dbname = 'drug.db';
   static const _rdbname = 'reminder.db';
   static const _version = 1;
-  static const t_name = 'Medinfo';
-  static const c_name = 'name';
-  static const c_description = 'description';
-  static const c_instruction = 'instruction';
-  static const c_sideeffect = 'sideeffect';
-  static const c_image = 'image';
-  static const c_type = 'type';
-  static const c_language = 'language';
-  static const rt_name = 'Reminders';
-  static const r_name = 'name';
-  static const r_time = 'time';
-  static const r_date = 'date';
-  static const r_dose = 'dose';
-  static const r_when = 'whent';
-  static const r_image = 'image';
-  static const r_type = 'type';
+  static const _t_name = 'Medinfo';
+  static const _c_name = 'name';
+  static const _c_description = 'description';
+  static const _c_instruction = 'instruction';
+  static const _c_sideeffect = 'sideeffect';
+  static const _c_image = 'image';
+  static const _c_type = 'type';
+  static const _c_language = 'language';
+  static const _rt_name = 'Reminders';
+  static const _r_name = 'name';
+  static const _r_timeFuture = 'timeFuture';
+  static const _r_timePresent = 'timePresent';
+  static const _r_date = 'date';
+  static const _r_dose = 'dose';
+  static const _r_when = 'whent';
+  static const _r_image = 'image';
+  static const _r_type = 'type';
 
   databaseHelper._privateConstractor();
   static final databaseHelper instance = databaseHelper._privateConstractor();
   Database? _database;
   Database? _reminder;
-  // Future<Database> get database async =>
-  //     _database ??= _initilizdb() as Database;
 
   Future<Database?> get database async {
     if (_database != null) {
@@ -71,78 +70,82 @@ class databaseHelper with ChangeNotifier {
 
   _oncreate(Database? db, int version) async {
     await db!.execute('''
-    CREATE TABLE $t_name(
-      $c_name TEXT PRIMARY KEY NOT NULL,
-      $c_description TEXT NOT NULL,
-      $c_instruction TEXT NOT NULL,
-      $c_sideeffect TEXT NOT NULL,
-      $c_image TEXT NOT NULL,
-      $c_type TEXT NOT NULL,
-      $c_language TEXT NOT NULL
+    CREATE TABLE $_t_name(
+      $_c_name TEXT PRIMARY KEY NOT NULL,
+      $_c_description TEXT NOT NULL,
+      $_c_instruction TEXT NOT NULL,
+      $_c_sideeffect TEXT NOT NULL,
+      $_c_image TEXT NOT NULL,
+      $_c_type TEXT NOT NULL,
+      $_c_language TEXT NOT NULL
     )
 ''');
   }
    _onRcreate(Database? db, int version) async {
     await db!.execute('''
-    CREATE TABLE $rt_name(
-      $r_name TEXT NOT NULL,
-      $r_dose INTEGER NOT NULL,
-      $r_when TEXT NOT NULL,
-      $r_date TEXT NOT NULL,
-      $r_time TEXT NOT NULL,
-      $r_image TEXT NOT NULL,
-      $r_type TEXT NOT NULL,
-      PRIMARY KEY ($r_name, $r_date)
+    CREATE TABLE $_rt_name(
+      $_r_name TEXT NOT NULL,
+      $_r_dose INTEGER NOT NULL,
+      $_r_when TEXT NOT NULL,
+      $_r_date TEXT NOT NULL,
+      $_r_timeFuture TEXT NOT NULL,
+      $_r_timePresent TEXT NOT NULL,
+      $_r_image TEXT NOT NULL,
+      $_r_type TEXT NOT NULL,
+      PRIMARY KEY ($_r_name, $_r_date)
     )
 ''');
   }
 
   Future<int> insert(Map<String, dynamic> json) async {
     Database? db = await instance.database;
-    return await db!.insert(t_name, json).whenComplete(() => notifyListeners());
+    return await db!.insert(_t_name, json).whenComplete(() => notifyListeners());
   }
 
   Future<List<DbData>> select() async {
     Database? db = await instance.database;
-    var result = await db!.query(t_name, orderBy: c_name,);
+    var result = await db!.query(_t_name, orderBy: _c_name,);
     List<DbData> data =
         result.isNotEmpty ? result.map((e) => DbData.fromjson(e)).toList() : [];
     return data;
   }
+ 
   Future<int> delete(String name) async {
     Database? db = await instance.database;
 
-    return await db!.delete(t_name,
-        where: '$c_name=?',
+    return await db!.delete(_t_name,
+        where: '$_c_name=?',
         whereArgs: [name]).whenComplete(() => notifyListeners());
   }
 
-  Future<int> insertR(Map<String, dynamic> json,DateTime time ) async {
+  Future<int> insertR(Map<String, dynamic> json,DateTime timeFuture, DateTime timePresent ) async {
     Database? db = await instance.reminder;
-    DateTime timeNow=DateTime.now();
-    if(timeNow.day <= time.day || timeNow.month <= time.month || timeNow.year <= time.year || timeNow.hour <= time.hour || timeNow.minute < time.minute){
-    for(int i =timeNow.day;i<=time.day;i++){
-      
-      if(i==timeNow.day && timeNow.hour > time.hour || timeNow.minute > time.minute)
-      {
-        timeNow = DateTime(timeNow.year, timeNow.month, timeNow.day + 1);
-      }
-      else{
-        json['date']=DateFormat('yyyy-MM-dd').format(timeNow);
-        await db!.insert(rt_name, json).whenComplete(() => notifyListeners());
-        timeNow = DateTime(timeNow.year, timeNow.month, timeNow.day + 1);
+    
+  while(timePresent.compareTo(timeFuture) < 1) {
 
+    if(timePresent.compareTo(timeFuture) == 0 ) {
+      timePresent = DateTime(timePresent.year,timePresent.month,timePresent.day+1,timePresent.hour,timePresent.minute);
+    } else { 
+      json['date']=DateFormat('yyyy-MM-dd').format(timePresent);
+      await db!.insert(_rt_name, json).whenComplete(() => notifyListeners());
+      timePresent = DateTime(timePresent.year,timePresent.month,timePresent.day+1,timePresent.hour,timePresent.minute);
       }
-    }
     }
     return 0;
-    
   }
 
   Future<List<DbReminder>> selectRD(String date) async {
     Database? db = await instance.reminder;
-    var result = await db!.query(rt_name,where: '$r_date=?' ,
+    var result = await db!.query(_rt_name,where: '$_r_date=?' ,
         whereArgs: [date]);
+    List<DbReminder> data =
+        result.isNotEmpty ? result.map((e) => DbReminder.fromjson(e)).toList() : [];
+    return data;
+  }
+
+  Future<List<DbReminder>> selectRemindersOrderByDate() async {
+    Database? db = await instance.reminder;
+    var result = await db!.query(_rt_name,orderBy: _r_date,);
     List<DbReminder> data =
         result.isNotEmpty ? result.map((e) => DbReminder.fromjson(e)).toList() : [];
     return data;
@@ -152,8 +155,8 @@ class databaseHelper with ChangeNotifier {
   Future<int> deleteR(String name,String date) async {
     Database? db = await instance.reminder;
 
-    return await db!.delete(rt_name,
-        where: '$r_name=? AND $r_date=?',
+    return await db!.delete(_rt_name,
+        where: '$_r_name=? AND $_r_date=?',
         whereArgs: [name,date]).whenComplete(() => notifyListeners());
   }
 }

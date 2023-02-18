@@ -7,7 +7,8 @@ class DbReminder {
   String? when;
   
   String? date;
-  DateTime? time;
+  DateTime? timeFuture;
+  DateTime? timePresent;
   DbReminder(
       {required this.name,
       required this.type,
@@ -15,7 +16,8 @@ class DbReminder {
       required this.when,
       required this.image,
       required this.date,
-      required this.time});
+      required this.timePresent,
+      required this.timeFuture});
 
   factory DbReminder.fromjson(Map<String, dynamic> json) {
     return DbReminder(
@@ -25,7 +27,8 @@ class DbReminder {
         when: json['whent'],
         image: json['image'],
         date: json['date'],
-        time: DateTime.parse(json['time']));
+        timePresent: DateTime.parse(json['timePresent']),
+        timeFuture: DateTime.parse(json['timeFuture']));
   }
 
   Map<String, dynamic> tojson() {
@@ -34,7 +37,8 @@ class DbReminder {
       'dose': dose,
       'whent': when,
       'date': date,
-      'time':time!.toIso8601String(),
+      'timeFuture':timeFuture!.toIso8601String(),
+      'timePresent':timePresent!.toIso8601String(),
       'image': image,
       'type': type,
     };

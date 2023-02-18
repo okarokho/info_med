@@ -15,6 +15,8 @@ import 'package:info_med/widgets/api_draggable_sheet.dart';
 import 'package:info_med/widgets/grid_draggable_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 import '../models/box.dart';
 import 'camera_overlay.dart';
@@ -55,7 +57,7 @@ CroppedFile? dd;
           CropAspectRatioPreset.ratio16x9,
         ],
         uiSettings:[ AndroidUiSettings(
-          toolbarTitle: context.read<SharedPreference>().language == 'Kurdish' ?'ناوی دەرمانەکە بخە ناو لاکێشەکە':context.read<SharedPreference>().language == 'Arabic' ?'حدد اسم الطب':'Select the Name of Medicine',
+          toolbarTitle: AppLocalizations.of(context)!.selectName,
           toolbarColor: Colors.lightGreen,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.ratio16x9,
@@ -97,7 +99,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                   children: [
                     SpeedDialChild(
                       child: const Icon(Icons.camera_alt_rounded),
-                      label: value.language == 'Kurdish' ?'کامێرا':value.language == 'Arabic' ?'كاميرا':'Camera',
+                      label: AppLocalizations.of(context)!.camera,
                       onTap: () async {
                         textDetector.scannedText = '';
                         api.map.clear();
@@ -118,8 +120,8 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                               XFile(dd!.path));
                           var name = capitalize(
                               textDetector.scannedText!);
-            
-                           final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
+                           // TODO database
+                           final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
                           
                           if (boxInstance.isNotEmpty) {
                             showModalBottomSheet(
@@ -146,7 +148,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                 horizontal: 70, vertical: 4),
                             messageText: Center(
                               child: Text(
-                                value.language == 'Kurdish' ?'... چاوەڕوانبە':value.language == 'Arabic' ?'... جار التحميل':'loading ...',
+                                AppLocalizations.of(context)!.loading,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 18),
@@ -154,7 +156,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                             ),
                           ).show(context);
             
-                          await api.getByName(name,value.language);
+                          await api.getByName(name,'value.language'); // TODO language
             
                            (flushBarKey.currentWidget as Flushbar).dismiss();
             
@@ -170,7 +172,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                     horizontal: 25, vertical: 2),
                                 messageText: Center(
                                   child: Text(
-                                    value.language == 'Kurdish' ?'ببورە ئەو دەرمانەی کە بەدوایدا دەگەڕێیت نەدۆزرایەوە':value.language == 'Arabic' ?'آسف لم يتم العثور على الدواء الذي تبحث عنه':'Sorry The Drug You Searching Not Found !!',
+                                    AppLocalizations.of(context)!.sorryNotFound,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15),
@@ -192,7 +194,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                     ),
                     SpeedDialChild(
                       child: const Icon(Icons.image_search_rounded),
-                      label: value.language == 'Kurdish' ?'گەلەری':value.language == 'Arabic' ?'المعرض':'Gallery',
+                      label: AppLocalizations.of(context)!.gallery,
                       onTap: () async {
                         textDetector.scannedText = '';
                         api.map.clear();
@@ -206,8 +208,8 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                           var name =  capitalize(
                               textDetector.scannedText!);
               
-                          
-                            final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
+                          // TODO database
+                           final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
                        
                           if (boxInstance.isNotEmpty) {
                             showModalBottomSheet(
@@ -236,7 +238,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                 horizontal: 75, vertical: 4),
                             messageText: Center(
                               child: Text(
-                                value.language == 'Kurdish' ?'... چاوەڕوانبە':value.language == 'Arabic' ?'... جار التحميل':'loading ...',
+                                AppLocalizations.of(context)!.loading,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 18),
@@ -244,7 +246,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                             ),
                           ).show(context);
             
-                          await api.getByName(name,value.language);
+                          await api.getByName(name,'value.language'); // TODO language
             
                            (flushBarKey.currentWidget as Flushbar).dismiss();
             
@@ -261,7 +263,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                     horizontal: 25, vertical: 2),
                                 messageText: Center(
                                   child: Text(
-                                    value.language == 'Kurdish' ?'ببورە ئەو دەرمانەی کە بەدوایدا دەگەڕێیت نەدۆزرایەوە':value.language == 'Arabic' ?'آسف لم يتم العثور على الدواء الذي تبحث عنه':'Sorry The Drug You Searching Not Found !!',
+                                    AppLocalizations.of(context)!.sorryNotFound,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15),
@@ -283,7 +285,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                     ),
                     SpeedDialChild(
                       child: const Icon(Icons.manage_search_rounded),
-                      label: value.language == 'Kurdish' ?'گەڕان بە ناو':value.language == 'Arabic' ?'البحث عن الإسم':'Search by Name',
+                      label: AppLocalizations.of(context)!.searchName,
                       onTap: () async {
                         api.map.clear();
                         await showModalBottomSheet(
@@ -309,7 +311,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                       Icons.search,
                                       color: Colors.grey[600],
                                     ),
-                                    hintText: value.language == 'Kurdish' ?'ناوی دەرمان':value.language == 'Arabic' ?'أدخل الاسم':'Enter a Name',
+                                    hintText: AppLocalizations.of(context)!.enterName,
                                     hintStyle: const TextStyle(
                                     leadingDistribution: TextLeadingDistribution.even,
                                     height: 1,  
@@ -327,8 +329,8 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         );
                             
                           String name = capitalize(controller.text.trim());
-                          
-                          final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
+                          // TODO database
+                           final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
                      
                         if (boxInstance.isNotEmpty) {
                           showModalBottomSheet(
@@ -358,7 +360,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                 horizontal: 70, vertical: 4),
                             messageText: Center(
                               child: Text(
-                                value.language == 'Kurdish' ?'... چاوەڕوانبە':value.language == 'Arabic' ?'... جار التحميل':'loading ...',
+                                AppLocalizations.of(context)!.loading,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 18),
@@ -366,7 +368,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                             ),
                           ).show(context);
             
-                          await api.getByName(name,value.language);
+                          await api.getByName(name,'value.language'); // TODO language
             
                            (flushBarKey.currentWidget as Flushbar).dismiss();
             
@@ -382,7 +384,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                   horizontal: 25, vertical: 2),
                               messageText: Center(
                                 child: Text(
-                                  value.language == 'Kurdish' ?'ببورە ئەو دەرمانەی کە بەدوایدا دەگەڕێیت نەدۆزرایەوە':value.language == 'Arabic' ?'آسف لم يتم العثور على الدواء الذي تبحث عنه':'Sorry The Drug You Searching Not Found !!',
+                                  AppLocalizations.of(context)!.sorryNotFound,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 15),

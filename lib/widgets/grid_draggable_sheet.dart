@@ -9,9 +9,10 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/util/database.dart';
 import 'package:info_med/models/db_data.dart';
 import 'package:info_med/util/shared_preference.dart';
-import 'package:info_med/widgets/my_text.dart';
+import 'package:info_med/widgets/title_text.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/box.dart';
 import '../models/image.dart';
@@ -25,36 +26,22 @@ class MyDraggableSCrollableSheet extends StatefulWidget {
       _MyDraggableSCrollableSheetState();
 }
 
-class _MyDraggableSCrollableSheetState
-    extends State<MyDraggableSCrollableSheet> {
-  bool toggle = false;
-  List<DbData> names = [];
-  ImageProvider? image;
-  bool isAsset = false;
-  Future initilize() async {
-    
-    names = await databaseHelper.instance.select();
-    setState(() {
-      toggle = exist();
-    });
-  }
-
-  bool exist() {
-    bool test = false;
-
-    for (int i = 0; i < names.length; i++) {
-      if (names[i].name! == widget.name.toString()) {
-        test = true;
-      }
-    }
-    return test;
-  }
+class _MyDraggableSCrollableSheetState extends State<MyDraggableSCrollableSheet> {
+  
+  // bool to check drug saved or not
+  bool _toggle = false;
+  // list for all drugs in the database
+  List<DbData> _names = [];
+  // drug image
+  ImageProvider? _image;
+  // false to check whether the drug image is network or default
+  bool _isAsset = false;
 
   @override
   void initState() {
     super.initState();
-    initilize();
-    image = Img.imagep;
+    _initilize();
+    _image = Img.imagep;
   }
 
   @override
@@ -63,30 +50,30 @@ class _MyDraggableSCrollableSheetState
       initialChildSize: 0.38,
       minChildSize: 0.28,
       maxChildSize: 0.9,
-      
       builder: (context, scrollController) {
+
         return ClipRRect(
           borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              topLeft: Radius.circular(30), 
+              topRight: Radius.circular(30)),
+          // color
           child: Container(
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [Colors.transparent, Colors.white],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0, 0.1])),
+              color: Colors.white,
               child: Consumer2<databaseHelper,SharedPreference>(
                 builder: (context,db, value,child) {
-                   final boxInstance = value.language == 'Kurdish'?Boxes.getBoxKurdish().values.where((element) => element.name==widget.name):value.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==widget.name):value.language == 'Arabic'?Boxes.getBoxArabic().values.where((element) => element.name==widget.name):null;
-                  final sideffect=boxInstance!.first.side_effect.toString().substring(1,boxInstance.first.side_effect.length-1).split(RegExp("[,;،]"));
+                  // TODO databse
+                  final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==widget.name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==widget.name):Boxes.getBoxArabic().values.where((element) => element.name==widget.name);
+                  // get side effect list
+                  final sideffect=boxInstance.first.side_effect.toString().substring(1,boxInstance.first.side_effect.length-1).split(RegExp("[,;،]"));
                  
                   return Column(
                     children: [
+                      // drug image
                       SingleChildScrollView(
                         controller: scrollController,
-                        
                         child: Stack(
                           children: [
+                            // image and download functionality
                             SizedBox(
                               height: 211,
                               width: MediaQuery.of(context).size.width,
@@ -94,6 +81,7 @@ class _MyDraggableSCrollableSheetState
                                   borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(30),
                                       topRight: Radius.circular(30)),
+                                  // taping on image to download
                                   child: GestureDetector(
                                     onTap: () async {
                                       return showModalBottomSheet(
@@ -104,50 +92,44 @@ class _MyDraggableSCrollableSheetState
                                         builder: (context) {
                                           return Stack(
                                             children: [
+                                              // using photo view to zoomin & zoomout
                                               PhotoView(
-                                                imageProvider: isAsset == true ? image :NetworkImage(
-                                                  boxInstance.first.image.toString(),
-                                                ),
-                                                minScale: PhotoViewComputedScale
-                                                    .contained,
-                                                maxScale: PhotoViewComputedScale
-                                                        .contained *
-                                                    4,
+                                                imageProvider: _isAsset == true ?
+                                                 _image:
+                                                 NetworkImage(
+                                                  boxInstance.first.image.toString(),),
+                                                minScale: PhotoViewComputedScale.contained,
+                                                maxScale: PhotoViewComputedScale.contained * 4,
                                               ),
-                                               isAsset == false? Positioned(
+                                              // if image type is not asset of default image then you can download else you cant
+                                               _isAsset == false? 
+                                               // menu with download option
+                                               Positioned(
                                                 right: 0,
                                                 top: 30,
                                                 child: PopupMenuButton(
                                                   onSelected: (value) async {
-                                                    if (value == 'd') {
-                                                      if (value == 'd') {
+                                                      if (value == 'download') {
                                                       
                                                         await GallerySaver
                                                           .saveImage(boxInstance.first.image.toString());
                                                         Flushbar(
-                                                        backgroundColor:
-                                                            Colors.black,
-                                                        duration:
-                                                            const Duration(
-                                                                seconds: 2),
-                                                        messageText:
-                                                            const Center(
-                                                                child: Text(
-                                                          'Downloaded to Gallery!',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        )),
+                                                        backgroundColor: Colors.black,
+                                                        duration: const Duration(seconds: 2),
+                                                        messageText: const 
+                                                          Center(
+                                                            child: Text(
+                                                              'Downloaded to Gallery!',
+                                                              style: TextStyle(
+                                                                color: Colors.white),
+                                                        )
+                                                       ),
                                                       ).show(context);
-                                                      
                                                      }
-                                                    }
-                                                     
-                                                  
                                                   },
                                                   itemBuilder: (context) => [
                                                     const PopupMenuItem(
-                                                      value: 'd',
+                                                      value: 'download',
                                                       child: Text('Download'),
                                                     ),
                                                   ],
@@ -156,7 +138,9 @@ class _MyDraggableSCrollableSheetState
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                              ):Container(),
+                                              ):
+                                              // empty box
+                                              const SizedBox(),
                                             ],
                                           );
                                         },
@@ -164,32 +148,26 @@ class _MyDraggableSCrollableSheetState
                                     },
                                     child: CachedNetworkImage(
                                       imageUrl: boxInstance.first.image.toString(),
-                                      placeholder: (context, url) =>
-                                          const Center(
-                                              child:
-                                                  CircularProgressIndicator()),
+                                      placeholder: (context, url) => const Center(child:CircularProgressIndicator()),
                                       errorWidget: (context, url, error) {
-                                      
-                                          isAsset = true;
-
-                                        return Image(image: image!,fit: BoxFit.cover);
+                                          _isAsset = true;
+                                        return Image(image: _image!,fit: BoxFit.cover);
                                       },
-
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fitHeight,
                                       key: UniqueKey(),
                                     ),
                                   )),
                             ),
+                            // drug name over the image
                             Baseline(
                               baseline: 200,
                               baselineType: TextBaseline.ideographic,
-                              child: Stack(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 4.0),
+                              child: Padding(
+                                    padding: AppLocalizations.of(context)!.language == 'English' ? const EdgeInsets.only(left: 4.0,) : const EdgeInsets.only(right: 4.0,),
                                     child: Container(
+                                      padding: AppLocalizations.of(context)!.language == 'English' ? const EdgeInsets.only(left: 8.0,top: 2) : const EdgeInsets.only(right: 8.0,top: 2),
                                       decoration: BoxDecoration(
-                                          color: Colors.grey[200],
+                                          color: Colors.grey[200]!.withOpacity(0.9),
                                           borderRadius: const BorderRadius.only(
                                               topRight: Radius.circular(5),
                                               bottomRight: Radius.circular(5),
@@ -197,49 +175,43 @@ class _MyDraggableSCrollableSheetState
                                               bottomLeft: Radius.circular(5))),
                                       height: 23.3,
                                       width: 170,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8.0, top: 2),
-                                    child: Text(
+                                      child: Text(
                                       widget.name,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         letterSpacing: 1,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
-                                      ),
+                                     ),
                                     ),
+                                   ),
                                   ),
-                                ],
-                              ),
                             ),
+                            // favourit & close icon
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [  
+                                  // favourite
                                   Container(
                                     decoration: BoxDecoration(
-                                        color:
-                                            Colors.grey[200]!.withOpacity(0.9),
+                                        color: Colors.grey[200]!.withOpacity(0.9),
                                         shape: BoxShape.circle),
                                     child: IconButton(
                                         onPressed: () async {
                                           setState(() {
-                                            if (!toggle) toggle = !toggle;
-                                            if (toggle && !exist()) {
+                                            if (!_toggle) _toggle = !_toggle;
+                                            if (_toggle && !_exist()) {
                                               var test = DbData(
                                                   name: widget.name,
                                                   description: boxInstance.first.description.toString(),
                                                   instruction: boxInstance.first.instruction.toString(),
                                                   sideeffect: boxInstance.first.side_effect.toString(),
                                                   image:boxInstance.first.image.toString(),
-                                                  type: isAsset ==true ?'s':'n',
-                                                  language: value.language == 'Kurdish' ?'Kurdish':value.language == 'Arabic' ?'Arabic':'English');
+                                                  type: _isAsset ==true ?'s':'n',
+                                                  // TODO language
+                                                  language: AppLocalizations.of(context)!.language == 'کوردی' ?'Kurdish':AppLocalizations.of(context)!.language == 'English' ?'Arabic':'Arabic');
                                               db.insert(test.tojson());
                                               context.read<DataProvider>().getDataFavored();
                                             }
@@ -247,7 +219,7 @@ class _MyDraggableSCrollableSheetState
                                           });
                                         },
                                         color: Colors.black,
-                                        icon: toggle
+                                        icon: _toggle
                                             ? const Icon(
                                                 Icons.favorite_rounded,
                                                 color: Colors.red,
@@ -258,10 +230,10 @@ class _MyDraggableSCrollableSheetState
                                                 size: 26,
                                               )),
                                   ),
+                                  // close
                                   Container(
                                     decoration: BoxDecoration(
-                                        color:
-                                            Colors.grey[200]!.withOpacity(0.9),
+                                        color:Colors.grey[200]!.withOpacity(0.9),
                                         shape: BoxShape.circle),
                                     child: IconButton(
                                         onPressed: () {
@@ -279,6 +251,7 @@ class _MyDraggableSCrollableSheetState
                           ],
                         ),
                       ),
+                      // drug info
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -286,31 +259,31 @@ class _MyDraggableSCrollableSheetState
                           child: ListView(
                             controller: scrollController,
                             children: [
-                                TitleText(txt: value.language == 'Kurdish' ?'ناوی دەرمان:':value.language == 'Arabic' ?'اسم الطب:':'Medicine Name:',size: 18,ltr: value.language == 'English'?true:false),
+                                TitleText(txt: AppLocalizations.of(context)!.drugName,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
-                              TitleText(txt: widget.name,size: 16,ltr: value.language == 'English'?true:false),
+                              TitleText(txt: widget.name,size: 16,),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TitleText(txt: value.language == 'Kurdish' ?'دەربارە:':value.language == 'Arabic' ?'وصف:':'Description:',size: 18,ltr: value.language == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.description,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
-                              TitleText(txt: boxInstance.first.description,size: 14,ltr: value.language == 'English'?true:false),
+                              TitleText(txt: boxInstance.first.description,size: 14,),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TitleText(txt: value.language == 'Kurdish' ?'بەکارهێنان:':value.language == 'Arabic' ?'تعليمات:':'Instruction:',size: 18,ltr: value.language == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.instruction,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
-                              TitleText(txt: boxInstance.first.instruction,size: 14,ltr: value.language == 'English'?true:false),
+                              TitleText(txt: boxInstance.first.instruction,size: 14,),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TitleText(txt: value.language == 'Kurdish' ?'کاریگەرییە لاوەکیەکان:':value.language == 'Arabic' ?'اعراض جانبية:':'Side Effect:',size: 18,ltr: value.language == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.sideeffect,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -320,7 +293,7 @@ class _MyDraggableSCrollableSheetState
                                 itemCount: 
                                 sideffect.length ,
                                 itemBuilder: (context, index) => 
-                                TitleText(txt: '- ${sideffect[index]}',size: 14,ltr: value.language == 'English'?true:false),
+                                TitleText(txt: '- ${sideffect[index]}',size: 14,),
                               ),
                               const SizedBox(
                                 height: 10,
@@ -337,12 +310,17 @@ class _MyDraggableSCrollableSheetState
       },
     );
   }
-}
+ 
+ // check whether the drug is saved or not
+ // ignore: iterable_contains_unrelated_type
+ bool _exist() => _names.contains(widget.name.toString());
+// check and set the toogle flag
+Future _initilize() async {
+    // get all the saved drug in the database
+    _names = await databaseHelper.instance.select();
+    setState(() {
+      _toggle = _exist();
+    });
+  }
 
-// Future<File> getImageFileFromAssets(String path) async {
-//   final byteData = await rootBundle.load(path);
-//   final file = File('${(await getTemporaryDirectory()).path}/image.jpg');
-//   await file.writeAsBytes(byteData.buffer
-//       .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-//   return file;
-// }
+}

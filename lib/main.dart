@@ -2,17 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:info_med/models/drugs.dart';
 import 'package:info_med/models/image.dart';
 import 'package:info_med/models/second_api.dart';
 import 'package:info_med/util/database.dart';
-import 'package:info_med/pages/home.dart';
+import 'package:info_med/pages/home/home.dart';
 import 'package:info_med/util/provider.dart';
 import 'package:info_med/util/shared_preference.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'l10n/l10n.dart';
 
 String kurdishDB='drug.hive';
 String arabicDB='drugs.hive';
@@ -111,8 +115,17 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'MedScan',
+            locale: value.language,
+            supportedLocales: L10n.all,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
             theme: ThemeData(primarySwatch: Colors.deepPurple),
             home: Home(),
+            
           );
         },
       ),

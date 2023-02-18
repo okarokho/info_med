@@ -1,0 +1,257 @@
+{
+    "language": "English",
+    "@language":{
+      "description": "The current Language"
+    },
+
+    "local": "en",
+    "@local":{
+      "description": "The current local"
+    },
+
+    "search": "Search Medicine ...",
+    "@search": {
+      "description": "Search for Drug"
+    },
+
+    "home": "Home",
+    "@home":{
+      "description": "Home page"
+    },
+
+    "saved": "Saved",
+    "@saved":{
+      "description": "Saved Drugs pages"
+    },
+
+    "tracking": "Tracking",
+    "@tracking":{
+      "description": "Tracking page"
+    },
+
+    "reminder": "Reminder",
+    "@reminder":{
+      "description": "Reminder pages"
+    },
+
+    "all": "All",
+    "@all":{
+      "description": "All drugs list"
+    },
+
+    "antiInflammatory": "Anti-inflammatory",
+    "@antiInflammatory":{
+      "description": "Anti-inflammatory drug list"
+    },
+
+    "antibiotec": "Antibiotec",
+    "@antibiotec":{
+      "description": "Antibiotec drug list"
+    },
+
+    "heart": "Heart",
+    "@heart":{
+      "description": "Heart drug list"
+    },
+    
+    "stimulants": "Stimulants",
+    "@stimulants":{
+      "description": "Stimulants drug list"
+    },
+    
+    "lungs": "Lungs",
+    "@lungs":{
+      "description": "Lungs drug list"
+    },
+    
+    "sleepDisorder": "Sleep Disorder",
+    "@sleepDisorder":{
+      "description": "Sleep Disorder drug list"
+    },
+    
+    "eye": "Eye",
+    "@eye":{
+      "description": "Eye drug list"
+    },
+    
+    "stomach": "Stomach",
+    "@stomach":{
+      "description": "Stomach drug list"
+    },
+    
+    "antiDepressant": "Anti-depressant",
+    "@antiDepressant":{
+      "description": "Anti-depressant drug list"
+    },
+    
+    "seizure": "Seizure",
+    "@seizure":{
+      "description": "Seizure drug list"
+    },
+    
+    "painKiller": "Pain Killer",
+    "@painKiller":{
+      "description": "Pain Killer drug list"
+    },
+    
+    "diabetes": "Diabetes",
+    "@diabetes":{
+      "description": "Diabetes drug list"
+    },
+    
+    "hormons": "Hormons",
+    "@hormons":{
+      "description": "Hormons drug list"
+    },
+    
+    "others": "Others",
+    "@others":{
+      "description": "Others drug list"
+    },
+    
+    "notFound": "No information founded",
+    "@notFound":{
+      "description": "No information founded about drug"
+    },
+    
+    "delete": "Delete",
+    "@delete":{
+      "description": "Delete drug"
+    },
+    
+    "undo": "Undo",
+    "@undo":{
+      "description": "Undo operation"
+    },
+    
+    "deletedSuccessfully": "Deleted Successfully",
+    "@deletedSuccessfully":{
+      "description": "Successfully Deleted drug"
+    },
+
+    "noDrug": "No Drug to Remind !!",
+    "@noDrug":{
+      "description": "No Drug found to Remind !!"
+    },
+
+    "drugName": "Drug Name",
+    "@drugName":{
+      "description": "Drug Name"
+    },
+
+    "nameError": "Enter Drug Name",
+    "@nameError":{
+      "description": "error when name is empty"
+    },
+
+    "dose": "Dose",
+    "@dose":{
+      "description": "Dose"
+    },
+    
+    "doseNumber": "Pls Enter Dose Amount",
+    "@doseNumber":{
+      "description": "pls enter the dose"
+    },
+
+    "type": "Type",
+    "@type":{
+      "description": "Type"
+    },
+
+    "drugType": "Pls choose type",
+    "@drugType":{
+      "description": "Pls choose type"
+    },
+
+    "whenToTake": "When to take",
+    "@whenToTake":{
+      "description": "When to take"
+    },
+
+    "drugTime": "Pls select time",
+    "@drugTime":{
+      "description": "Pls select time"
+    },
+
+    "invalidTime": "Invalid Format",
+    "@invalidTime":{
+      "description": "Invalid Format"
+    },
+
+    "invalidDate": "Invalid Format",
+    "@invalidDate":{
+      "description": "Invalid Format"
+    },
+
+    "empty": "Empty",
+    "@empty":{
+      "description": "Empty"
+    },
+
+    "medTime": "Time to take your Medication !",
+    "@medTime":{
+      "description": "Time to take your Medication !"
+    },
+
+    "save": "Save",
+    "@save":{
+      "description": "Save"
+    },
+
+    "description": "Description",
+    "@description":{
+      "description": "Description"
+    },
+
+    "instruction": "Instruction",
+    "@instruction":{
+      "description": "Instruction"
+    },
+
+    "sideeffect": "Side Effect",
+    "@sideeffect":{
+      "description": "Side Effect"
+    },
+
+    "lang": "Language",
+    "@lang":{
+      "description": "Language"
+    },
+
+    "camera": "Camera",
+    "@camera":{
+      "description": "Camera"
+    },
+
+    "selectName": "Select the Name of Medicine",
+    "@selectName":{
+      "description": "Select the Name of Medicine"
+    },
+
+    "loading": "Loading ...",
+    "@loading":{
+      "description": "loading ..."
+    },
+
+    "sorryNotFound": "Sorry The Drug You Searching Not Found !!",
+    "@sorryNotFound":{
+      "description": "Sorry The Drug You Searching Not Found !!"
+    },
+
+    "gallery": "Gallery",
+    "@gallery":{
+      "description": "Gallery"
+    },
+
+    "searchName": "Search by Name",
+    "@searchName":{
+      "description": "Search by Name"
+    },
+
+    "enterName": "Enter a Name",
+    "@enterName":{
+      "description": "Enter a Name"
+    }
+    
+}

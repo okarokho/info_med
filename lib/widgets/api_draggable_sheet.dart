@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:info_med/models/image.dart';
 import 'package:info_med/util/database.dart';
-import 'package:info_med/widgets/my_text.dart';
+import 'package:info_med/widgets/title_text.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/db_data.dart';
 import '../util/provider.dart';
@@ -22,40 +23,31 @@ class ApiDraggableSheet extends StatefulWidget {
       required this.name,
       required this.imageUrl,
       required this.type});
-  String name;
-  String type;
 
+  // name of drug
+  String name;
+  // type of drug image
+  String type;
+  // a map containing information aboute drug
   Map<String, dynamic> map = {};
+  // url of drug image
   String imageUrl;
+
   @override
   State<ApiDraggableSheet> createState() => _ApiDraggableSheetState();
 }
 
 class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
-  bool toggle = false;
-  List<DbData> names = [];
-  Future initilize() async {
-    names = await databaseHelper.instance.select();
-    setState(() {
-      toggle = exist();
-    });
-
-  }
-
-  bool exist() {
-    bool test = false;
-
-    for (int i = 0; i < names.length; i++) {
-      if (names[i].name! == widget.name.toString()) {
-        test = true;
-      }
-    }
-    return test;
-  }
+  
+  // bool to check drug saved or not
+  bool _toggle = false;
+  // list for all drugs in the database
+  List<DbData> _names = [];
+  
 
   @override
   void initState() {
-    initilize();
+    _initilize();
     super.initState();
   }
 
@@ -68,7 +60,9 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
       builder: (context, scrollController) {
         return ClipRRect(
           borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              topLeft: Radius.circular(30), 
+              topRight: Radius.circular(30)),
+              // color
           child: Container(
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -76,22 +70,27 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       stops: [0, 0.1])),
+
               child: Consumer<databaseHelper>(
                 builder: (context, db, child) {
+                  // get side effect list
                   final sideffect=widget.map['side'].toString().substring(1,widget.map['side'].length-1).split(RegExp("[,;،]"));
                   return Column(
                     children: [
+                      // drug image
                       SingleChildScrollView(
                         controller: scrollController,
                         child: Stack(
                           children: [
+                            // image and download functionality
                             SizedBox(
-                              height: 211,
+                              height: 211, //TODO fix image
                               width: MediaQuery.of(context).size.width,
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(30),
                                     topRight: Radius.circular(30)),
+                                // taping on image to download
                                 child: GestureDetector(
                                     onTap: () async {
                                       return showModalBottomSheet(
@@ -102,47 +101,41 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                         builder: (context) {
                                           return Stack(
                                             children: [
+                                              // using photo view to zoomin & zoomout
                                               PhotoView(
-                                                imageProvider: getImage(
-                                                    widget.imageUrl,
-                                                    widget.type,
-                                                    'imgp'),
-                                                minScale: PhotoViewComputedScale
-                                                    .contained,
-                                                maxScale: PhotoViewComputedScale
-                                                        .contained *
-                                                    4,
+                                                imageProvider: getImage(widget.imageUrl,widget.type,'imgp'),
+                                                minScale: PhotoViewComputedScale.contained,
+                                                maxScale: PhotoViewComputedScale.contained * 4,
                                               ),
-                                              widget.type != 's' ?Positioned(
+                                              // if image type is not asset of default image then you can download else you cant
+                                              widget.type != 's' ?
+                                              // menu with download option
+                                              Positioned(
                                                 right: 0,
                                                 top: 30,
                                                 child: PopupMenuButton(
                                                   onSelected: (value) async {
-                                                    if (value == 'd') {                                                      
-
-                                                        await GallerySaver
-                                                            .saveImage(widget.imageUrl);
-                                                            Flushbar(
-                                                        backgroundColor:
-                                                            Colors.black,
-                                                        duration:
-                                                            const Duration(
-                                                                seconds: 2),
-                                                        messageText:
-                                                            const Center(
-                                                                child: Text(
-                                                          'Downloaded to Gallery!',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        )),
+                                                    if (value == 'download') {
+                                                      // save image
+                                                      await GallerySaver.saveImage(widget.imageUrl);
+                                                      // show flushbar downloaded
+                                                      Flushbar(
+                                                        backgroundColor: Colors.black,
+                                                        duration: const Duration(seconds: 2),
+                                                        messageText: const 
+                                                          Center(
+                                                            child: Text(
+                                                              'Downloaded to Gallery!',
+                                                              style: TextStyle(
+                                                                color: Colors.white),
+                                                        )
+                                                       ),
                                                       ).show(context);
-                                                      
                                                     }
                                                   },
                                                   itemBuilder: (context) => [
                                                     const PopupMenuItem(
-                                                      value: 'd',
+                                                      value: 'download',
                                                       child: Text('Download'),
                                                     ),
                                                   ],
@@ -151,24 +144,25 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                              ):Container(),
+                                              ):
+                                              //empty box 
+                                              const SizedBox(),
                                             ],
                                           );
                                         },
                                       );
                                     },
-                                    child: getImage(
-                                        widget.imageUrl, widget.type, 'x')),
+                                    child: getImage(widget.imageUrl, widget.type, 'x')),
                               ),
                             ),
+                            // drug name over the image
                             Baseline(
                               baseline: 200,
                               baselineType: TextBaseline.ideographic,
-                              child: Stack(
-                                children: [
-                                  Padding(
+                              child:   Padding(
                                     padding: const EdgeInsets.only(left: 4.0),
                                     child: Container(
+                                      padding: const EdgeInsets.only(top: 2),
                                       decoration: BoxDecoration(
                                           color: Colors.grey[200]!
                                               .withOpacity(0.9),
@@ -179,41 +173,34 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                               bottomLeft: Radius.circular(5))),
                                       height: 23.3,
                                       width: 170,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8.0, top: 2),
-                                    child: Text(
+                                      child: Text(
                                       widget.name,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         letterSpacing: 1,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
-                                      ),
+                                     ),
                                     ),
+                                   ),
                                   ),
-                                ],
-                              ),
                             ),
+                            // favourit & close icon
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  
+                                  // favourite
                                   Container(
                                     decoration: BoxDecoration(
-                                        color:
-                                            Colors.grey[200]!.withOpacity(0.9),
+                                        color: Colors.grey[200]!.withOpacity(0.9),
                                         shape: BoxShape.circle),
                                     child: IconButton(
                                         onPressed: () {
                                           setState(() {
-                                            if (!toggle) toggle = !toggle;
-                                            if (toggle && !exist()) {
+                                            if (!_toggle) _toggle = !_toggle;
+                                            if (_toggle && !_exist()) {
                                               var test = DbData(
                                                   name: widget.name,
                                                   description: widget.map['description'],
@@ -228,7 +215,7 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                           });
                                         },
                                         color: Colors.black,
-                                        icon: toggle
+                                        icon: _toggle
                                             ? const Icon(
                                                 Icons.favorite_rounded,
                                                 color: Colors.red,
@@ -239,10 +226,10 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                                 size: 26,
                                               )),
                                   ),
+                                  // close
                                   Container(
                                     decoration: BoxDecoration(
-                                        color:
-                                            Colors.grey[200]!.withOpacity(0.9),
+                                        color: Colors.grey[200]!.withOpacity(0.9),
                                         shape: BoxShape.circle),
                                     child: IconButton(
                                         onPressed: () {
@@ -259,38 +246,38 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                           ],
                         ),
                       ),
+                      // drug info
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           child: ListView(
                             controller: scrollController,
                             children: [
-                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'ناوی دەرمان:':widget.map['language'] == 'Arabic' ?'اسم الطب:':'Medicine Name:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.drugName,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
-                              TitleText(txt: widget.name,size: 16,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: widget.name,size: 16,),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'دەربارە:':widget.map['language'] == 'Arabic' ?'وصف:':'Description:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.description,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
-                              TitleText(txt: widget.map['description'],size: 14,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: widget.map['description'],size: 14,),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'بەکارهێنان:':widget.map['language'] == 'Arabic' ?'تعليمات:':'Instruction:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.instruction,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
-                              TitleText(txt: widget.map['instruction'],size: 14,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: widget.map['instruction'],size: 14,),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TitleText(txt: widget.map['language'] == 'Kurdish' ?'کاریگەرییە لاوەکیەکان:':widget.map['language'] == 'Arabic' ?'اعراض جانبية:':'Side Effect:',size: 18,ltr: widget.map['language'] == 'English'?true:false),
+                              TitleText(txt: AppLocalizations.of(context)!.sideeffect,size: 18,),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -300,7 +287,7 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                 itemCount: 
                                 sideffect.length ,
                                 itemBuilder: (context, index) => 
-                                TitleText(txt: '- ${sideffect[index]}',size: 14,ltr: widget.map['language'] == 'English'?true:false),
+                                TitleText(txt: '- ${sideffect[index]}',size: 14,),
                               ),
                               const SizedBox(
                                 height: 10,
@@ -312,13 +299,29 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                     ],
                   );
                 },
-              )),
+            )
+          ),
         );
       },
     );
   }
-}
+ 
+ // check and set the toogle flag
+  Future _initilize() async {
+    // get all the saved drug in the database
+    _names = await databaseHelper.instance.select();
+    setState(() {
+      _toggle = _exist();
+    });
 
+  }
+
+ // check whether the drug is saved or not
+  // ignore: iterable_contains_unrelated_type
+  bool _exist() => _names.contains(widget.name.toString());
+
+}
+// TODO explain
 getImage(String url, String type, String imgprovider) {
   switch (type) {
     case 'p':
@@ -357,14 +360,3 @@ getImage(String url, String type, String imgprovider) {
       }
   }
 }
-
-// Future getImageFileFromAssets(String path) async {
-//   final byteData = await rootBundle.load(path);
-//   final file = await File('${(await getTemporaryDirectory()).path}/image.jpg').create(recursive: true);
-//   await file.writeAsBytes(byteData.buffer
-//       .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-//   await channel.invokeMethod(
-//       'saveImage',
-//       <String, dynamic>{'path': file.path, 'albumName': null, 'toDcim': false},
-//     );
-// }

@@ -6,32 +6,26 @@ import 'package:flutter/cupertino.dart';
 
 class LocalNotification{
 
-static Future showScheduledNotification({int id=0,String? title,String? body,required DateTime timeFuture}) async {
+static Future showScheduledNotification({int id=0,String? title,String? body,required DateTime timeFuture,required DateTime timePresent}) async {
  
-DateTime timeNow = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day ,timeFuture.hour,timeFuture.minute);
-
- if(timeNow.day <= timeFuture.day && timeNow.month <= timeFuture.month && timeNow.year <= timeFuture.year && timeNow.hour <= timeFuture.hour && timeNow.minute <= timeFuture.minute){
+ if(timePresent.day <= timeFuture.day && timePresent.month <= timeFuture.month && timePresent.year <= timeFuture.year && timePresent.hour <= timeFuture.hour && timePresent.minute <= timeFuture.minute){
   
-  for(int i =timeNow.day;i<=timeFuture.day;i++){
+  while(timePresent.compareTo(timeFuture) < 1) {
 
-     if(i==timeNow.day && timeNow.hour > timeFuture.hour || timeNow.minute > timeFuture.minute)
-      {
-      timeNow = DateTime(timeNow.year, timeNow.month, timeNow.day + 1,timeNow.hour,timeNow.minute);
-      }
-      else{
-        await AwesomeNotifications().createNotification(
+    if(timePresent.compareTo(timeFuture) == 0 ) {
+      timePresent = DateTime(timePresent.year,timePresent.month,timePresent.day+1,timePresent.hour,timePresent.minute);
+    } else { 
+      await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: UniqueKey().hashCode,
           channelKey: 'key1',
           title: title,
           body:body,
           notificationLayout: NotificationLayout.Default),
-      schedule: NotificationCalendar.fromDate(date: timeNow));
-      timeNow = DateTime(timeNow.year, timeNow.month, timeNow.day + 1,timeNow.hour,timeNow.minute);
-      
-
+      schedule: NotificationCalendar.fromDate(date: timePresent));
+      timePresent = DateTime(timePresent.year,timePresent.month,timePresent.day+1,timePresent.hour,timePresent.minute);
       }
- }
- }
-}
+    }
+   }
+  }
 }
