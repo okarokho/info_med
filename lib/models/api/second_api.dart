@@ -1,30 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
-import 'package:info_med/util/translator.dart';
+import 'package:info_med/util/scan%20util/translator.dart';
 
-class Get with ChangeNotifier{
+class Get with ChangeNotifier {
+  // side effect
   List side = [];
+  // description
   String description = '';
+  // instruction
   String instruction = '';
+  // deug name
   String name = '';
-  bool isLoading = false;
-  Map<String,dynamic> map={};
+  // map of medicine data
+  Map<String, dynamic> map = {};
+  // translation object
   late Translation translate;
+  // http client
+  final client = http.Client();
   Get() {
     translate = Translation();
   }
-  
-  toggle(){
-    isLoading=!isLoading;
-    notifyListeners();
-  }
 
-  getByName(String search,String language) async {
+  // get the link of the drug page
+  getByName(String search, String language) async {
     final url = Uri.parse(
         'https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.69&mainSearchCriteria.v.dn=$search&informationRecipient.languageCode.c=en');
 
-    final response = await http.get(url);
+    final response = await client.get(url);
     dom.Document html = dom.Document.html(response.body);
 
     String link = html
@@ -32,14 +35,15 @@ class Get with ChangeNotifier{
             '#results-body > div > div:nth-child(1) > p > span > a')
         .map((e) => e.innerHtml)
         .first;
-    await _getWebsiteData(link , language);
+    await _getWebsiteData(link, language);
   }
 
-  Future _getWebsiteData(String link,String language) async {
+  // get the information in the drug page & translate
+  Future _getWebsiteData(String link, String language) async {
     final url = Uri.parse(link);
     //a604028  -  a696015  -   a682878
 
-    final response = await http.get(url);
+    final response = await client.get(url);
     dom.Document html = dom.Document.html(response.body);
 
     side = html
@@ -48,10 +52,14 @@ class Get with ChangeNotifier{
         .toList();
 
     for (int i = 0; i < side.length; i++) {
-      if(language != 'English') side[i] = language == 'Kurdish' ?await translate.translateKurdish(side[i]): await translate.translateArabic(side[i]);
+      if (language != 'en') {
+        side[i] = language == 'ku'
+            ? await translate.translateKurdish(side[i])
+            : await translate.translateArabic(side[i]);
+      }
     }
 
-map.putIfAbsent('side', () => side.toString());
+    map.putIfAbsent('side', () => side.toString());
 
     description = html
         .querySelectorAll('#section-1 > p')
@@ -66,9 +74,13 @@ map.putIfAbsent('side', () => side.toString());
                     .length -
                 1);
 
-if(language != 'English') description = language == 'Kurdish' ?await translate.translateKurdish(description): await translate.translateArabic(description);
+    if (language != 'en') {
+      description = language == 'ku'
+          ? await translate.translateKurdish(description)
+          : await translate.translateArabic(description);
+    }
 
-map.putIfAbsent('description', () => description);
+    map.putIfAbsent('description', () => description);
 
     instruction = html
         .querySelectorAll('#section-2 > p:nth-child(1)')
@@ -81,11 +93,14 @@ map.putIfAbsent('description', () => description);
                     .map((e) => e.innerHtml)
                     .toString()
                     .length -
-     
                 1);
-if(language != 'English') instruction = language == 'Kurdish' ? await translate.translateKurdish(instruction): await translate.translateArabic(instruction);
+    if (language != 'en') {
+      instruction = language == 'ku'
+          ? await translate.translateKurdish(instruction)
+          : await translate.translateArabic(instruction);
+    }
 
-map.putIfAbsent('instruction', () => instruction);
+    map.putIfAbsent('instruction', () => instruction);
 
     name = html
         .querySelectorAll(
@@ -101,7 +116,7 @@ map.putIfAbsent('instruction', () => instruction);
                     .toString()
                     .length -
                 1);
-                map.putIfAbsent('name', () => name);
-                map.putIfAbsent('language', () => language);
+    map.putIfAbsent('name', () => name);
+    map.putIfAbsent('language', () => language);
   }
 }

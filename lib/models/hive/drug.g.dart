@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'drugs.dart';
+part of 'drug.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -20,15 +20,16 @@ class DrugsAdapter extends TypeAdapter<Drugs> {
       name: fields[0] as String,
       description: fields[1] as String,
       instruction: fields[2] as String,
-      side_effect: fields[3] as String,
+      sideEffect: fields[3] as String,
       image: fields[4] as String,
+      language: fields[5] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Drugs obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -36,9 +37,11 @@ class DrugsAdapter extends TypeAdapter<Drugs> {
       ..writeByte(2)
       ..write(obj.instruction)
       ..writeByte(3)
-      ..write(obj.side_effect)
+      ..write(obj.sideEffect)
       ..writeByte(4)
-      ..write(obj.image);
+      ..write(obj.image)
+      ..writeByte(5)
+      ..write(obj.language);
   }
 
   @override

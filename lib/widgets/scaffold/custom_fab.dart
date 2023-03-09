@@ -7,19 +7,19 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:info_med/models/second_api.dart';
-import 'package:info_med/util/image_picker.dart';
-import 'package:info_med/util/ml_text_recognition.dart';
-import 'package:info_med/util/shared_preference.dart';
-import 'package:info_med/widgets/api_draggable_sheet.dart';
-import 'package:info_med/widgets/grid_draggable_sheet.dart';
+import 'package:info_med/constants/colors.dart';
+import 'package:info_med/models/api/second_api.dart';
+import 'package:info_med/util/scan%20util/image_picker.dart';
+import 'package:info_med/util/scan%20util/ml_text_recognition.dart';
+import 'package:info_med/util/provider/shared_preference.dart';
+import 'package:info_med/widgets/draggable/api_draggable_sheet.dart';
+import 'package:info_med/widgets/draggable/grid_draggable_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
-import '../models/box.dart';
-import 'camera_overlay.dart';
+import '../../models/hive/box.dart';
+import '../camera/camera_overlay.dart';
 
 class MyFAB extends StatefulWidget {
   const MyFAB({super.key});
@@ -29,13 +29,20 @@ class MyFAB extends StatefulWidget {
 }
 
 class _MyFABState extends State<MyFAB> {
+  // scan image
   Image? image;
-  var imagePicker = PickImage();
-  var textDetector = TextDetection();
-  var api = Get();
-  var controller = TextEditingController();
+  // image picker object
+  final imagePicker = PickImage();
+  // text recognition object
+  final textDetector = TextDetection();
+  // api object
+  final api = Get();
+  // textField controller
+  final TextEditingController controller = TextEditingController();
+  // global key for controlling flushbar state
   final GlobalKey flushBarKey = GlobalKey();
-CroppedFile? dd;
+  // croped image
+  CroppedFile? dd;
   @override
   void initState() {
     super.initState();
@@ -48,32 +55,10 @@ CroppedFile? dd;
     controller;
   }
 
- cropImage(File x) async {
- return await ImageCropper.platform.cropImage(
-        sourcePath: x.path,
-        
-        aspectRatioPresets: [
-         
-          CropAspectRatioPreset.ratio16x9,
-        ],
-        uiSettings:[ AndroidUiSettings(
-          toolbarTitle: AppLocalizations.of(context)!.selectName,
-          toolbarColor: Colors.lightGreen,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.ratio16x9,
-          lockAspectRatio: false,
-          hideBottomControls: true,
-        )] );
-   
-  }
-
-
-String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
       return Padding(
-
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Container(
           alignment: Alignment.bottomCenter,
@@ -82,8 +67,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
             borderRadius: BorderRadius.circular(100),
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color:  const Color( 0xff8F00FF)),
+                  borderRadius: BorderRadius.circular(100), color: purple),
               height: 64,
               width: 64,
               child: Consumer<SharedPreference>(
@@ -97,6 +81,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                   spacing: 6,
                   spaceBetweenChildren: 2,
                   children: [
+                    // camera search
                     SpeedDialChild(
                       child: const Icon(Icons.camera_alt_rounded),
                       label: AppLocalizations.of(context)!.camera,
@@ -104,62 +89,74 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         textDetector.scannedText = '';
                         api.map.clear();
                         imagePicker.image = null;
-                        Camera.test==null;
-                        dd=null;
+                        Camera.test == null;
+                        dd = null;
+                        // open camera
                         await availableCameras().then((value) => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Camera(cameras: value),
-                      )));
-                       
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Camera(cameras: value),
+                            )));
+                        // crop image
                         if (Camera.test != null) {
-                        dd = await cropImage(File(Camera.test!.path));
-                           
-                          
-                       await textDetector.recongnizeTextInImage(
-                              XFile(dd!.path));
-                          var name = capitalize(
-                              textDetector.scannedText!);
-                           // TODO database
-                           final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
-                          
+                          dd = await _cropImage(File(Camera.test!.path));
+                          // read text
+                          await textDetector
+                              .recongnizeTextInImage(XFile(dd!.path));
+                          var name = _capitalize(textDetector.scannedText!);
+                          // get the drug in local database based n current language
+                          final boxInstance = Boxes.getBox().values.where(
+                              (element) =>
+                                  element.name == name &&
+                                  element.language ==
+                                      AppLocalizations.of(context)!.local);
+                          // if in database
                           if (boxInstance.isNotEmpty) {
                             showModalBottomSheet(
                               isScrollControlled: true,
                               context: context,
                               backgroundColor: Colors.transparent,
-                              builder: (context) => MyDraggableSCrollableSheet(name: name,),
+                              builder: (context) => MyDraggableSCrollableSheet(
+                                name: name,
+                              ),
                             );
                           } else {
-                            
                             Flushbar(
-                            key:flushBarKey,
-                            borderColor: Colors.white,
-                            showProgressIndicator: true,
-                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
-                            barBlur: 5,
-                            flushbarPosition: FlushbarPosition.TOP,
-                            flushbarStyle: FlushbarStyle.FLOATING,
-                            animationDuration:
-                                const Duration(milliseconds: 400),
-                            reverseAnimationCurve: Curves.easeOut,
-                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 70, vertical: 4),
-                            messageText: Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.loading,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18),
+                              key: flushBarKey,
+                              borderColor: Colors.white,
+                              showProgressIndicator: true,
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15)),
+                              barBlur: 5,
+                              flushbarPosition: FlushbarPosition.TOP,
+                              flushbarStyle: FlushbarStyle.FLOATING,
+                              animationDuration:
+                                  const Duration(milliseconds: 400),
+                              reverseAnimationCurve: Curves.easeOut,
+                              backgroundColor:
+                                  Colors.grey[350]!.withOpacity(0.5),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 70, vertical: 4),
+                              messageText: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.loading,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18),
+                                ),
                               ),
-                            ),
-                          ).show(context);
-            
-                          await api.getByName(name,'value.language'); // TODO language
-            
-                           (flushBarKey.currentWidget as Flushbar).dismiss();
-            
+                            ).show(context);
+                            // search drug using api for 10 seconde
+                            await Future.microtask(() => api.getByName(
+                                    name, AppLocalizations.of(context)!.local))
+                                .timeout(
+                              const Duration(seconds: 10),
+                              onTimeout: () => api.map.clear(),
+                            );
+
+                            (flushBarKey.currentWidget as Flushbar).dismiss();
+
                             if (api.map.isEmpty) {
                               Flushbar(
                                 duration: const Duration(milliseconds: 2000),
@@ -180,11 +177,10 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                 ),
                               ).show(context);
                             } else {
-                              scanModalBottomSheet(
+                              _scanModalBottomSheet(
                                   context,
-                                   capitalize(
-                                      textDetector.scannedText!),
-                                  await saveImage(imagePicker.image!,
+                                  _capitalize(textDetector.scannedText!),
+                                  await _saveImage(imagePicker.image!,
                                       textDetector.scannedText!),
                                   'p');
                             }
@@ -192,6 +188,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         }
                       },
                     ),
+                    // gallery search
                     SpeedDialChild(
                       child: const Icon(Icons.image_search_rounded),
                       label: AppLocalizations.of(context)!.gallery,
@@ -199,58 +196,70 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         textDetector.scannedText = '';
                         api.map.clear();
                         imagePicker.image = null;
-                        dd=null;
+                        dd = null;
+                        // open gallery
                         await imagePicker.pickiImageGallery();
+                        // crop image
                         if (imagePicker.image != null) {
-                            dd = await cropImage(imagePicker.image!);
-                          await textDetector.recongnizeTextInImage(
-                              XFile(dd!.path));
-                          var name =  capitalize(
-                              textDetector.scannedText!);
-              
-                          // TODO database
-                           final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
-                       
+                          dd = await _cropImage(imagePicker.image!);
+                          // read text
+                          await textDetector
+                              .recongnizeTextInImage(XFile(dd!.path));
+                          var name = _capitalize(textDetector.scannedText!);
+
+                          // get the drug in local database based n current language
+                          final boxInstance = Boxes.getBox().values.where(
+                              (element) =>
+                                  element.name == name &&
+                                  element.language ==
+                                      AppLocalizations.of(context)!.local);
+                          // if in database
                           if (boxInstance.isNotEmpty) {
                             showModalBottomSheet(
                               isScrollControlled: true,
                               context: context,
                               backgroundColor: Colors.transparent,
                               builder: (context) => MyDraggableSCrollableSheet(
-                                  name: name,
-                                ),
+                                name: name,
+                              ),
                             );
                           } else {
-                            
                             Flushbar(
-                            key:flushBarKey,
-                            borderColor: Colors.white,
-                            showProgressIndicator: true,
-                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
-                            barBlur: 5,
-                            flushbarPosition: FlushbarPosition.TOP,
-                            flushbarStyle: FlushbarStyle.FLOATING,
-                            animationDuration:
-                                const Duration(milliseconds: 400),
-                            reverseAnimationCurve: Curves.easeOut,
-                            backgroundColor: Colors.grey[350]!.withOpacity(0.5),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 75, vertical: 4),
-                            messageText: Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.loading,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18),
+                              key: flushBarKey,
+                              borderColor: Colors.white,
+                              showProgressIndicator: true,
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15)),
+                              barBlur: 5,
+                              flushbarPosition: FlushbarPosition.TOP,
+                              flushbarStyle: FlushbarStyle.FLOATING,
+                              animationDuration:
+                                  const Duration(milliseconds: 400),
+                              reverseAnimationCurve: Curves.easeOut,
+                              backgroundColor:
+                                  Colors.grey[350]!.withOpacity(0.5),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 75, vertical: 4),
+                              messageText: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.loading,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18),
+                                ),
                               ),
-                            ),
-                          ).show(context);
-            
-                          await api.getByName(name,'value.language'); // TODO language
-            
-                           (flushBarKey.currentWidget as Flushbar).dismiss();
-            
-            
+                            ).show(context);
+                            // search drug using api for 10 seconde
+                            await Future.microtask(() => api.getByName(
+                                    name, AppLocalizations.of(context)!.local))
+                                .timeout(
+                              const Duration(seconds: 10),
+                              onTimeout: () => api.map.clear(),
+                            );
+
+                            (flushBarKey.currentWidget as Flushbar).dismiss();
+
                             if (api.map.isEmpty) {
                               Flushbar(
                                 duration: const Duration(milliseconds: 2000),
@@ -271,11 +280,10 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                 ),
                               ).show(context);
                             } else {
-                              scanModalBottomSheet(
+                              _scanModalBottomSheet(
                                   context,
-                                   capitalize(
-                                      textDetector.scannedText!),
-                                  await saveImage(imagePicker.image!,
+                                  _capitalize(textDetector.scannedText!),
+                                  await _saveImage(imagePicker.image!,
                                       textDetector.scannedText!),
                                   'p');
                             }
@@ -283,11 +291,13 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                         }
                       },
                     ),
+                    // text search
                     SpeedDialChild(
-                      child: const Icon(Icons.manage_search_rounded),
+                      child: const Icon(Icons.text_fields_rounded),
                       label: AppLocalizations.of(context)!.searchName,
                       onTap: () async {
                         api.map.clear();
+                        // show textField
                         await showModalBottomSheet(
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
@@ -311,11 +321,14 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                                       Icons.search,
                                       color: Colors.grey[600],
                                     ),
-                                    hintText: AppLocalizations.of(context)!.enterName,
+                                    hintText:
+                                        AppLocalizations.of(context)!.enterName,
                                     hintStyle: const TextStyle(
-                                    leadingDistribution: TextLeadingDistribution.even,
-                                    height: 1,  
-                                    color: Colors.grey, fontSize: 15),
+                                        leadingDistribution:
+                                            TextLeadingDistribution.even,
+                                        height: 1,
+                                        color: Colors.grey,
+                                        fontSize: 15),
                                     border: InputBorder.none,
                                   ),
                                   controller: controller,
@@ -327,28 +340,32 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                             ),
                           ),
                         );
-                            
-                          String name = capitalize(controller.text.trim());
-                          // TODO database
-                           final boxInstance = AppLocalizations.of(context)!.language == 'کوردی'?Boxes.getBoxKurdish().values.where((element) => element.name==name):AppLocalizations.of(context)!.language == 'English'?Boxes.getBoxEnglish().values.where((element) => element.name==name):Boxes.getBoxArabic().values.where((element) => element.name==name);
-                     
+
+                        String name = _capitalize(controller.text.trim());
+                        // get the drug in local database based n current language
+                        final boxInstance = Boxes.getBox().values.where(
+                            (element) =>
+                                element.name == name &&
+                                element.language ==
+                                    AppLocalizations.of(context)!.local);
+                        // if in database
                         if (boxInstance.isNotEmpty) {
                           showModalBottomSheet(
                             isScrollControlled: true,
                             context: context,
                             backgroundColor: Colors.transparent,
                             builder: (context) => MyDraggableSCrollableSheet(
-                               
-                                name: name,
-                               ),
+                              name: name,
+                            ),
                           );
                         } else {
-            
                           Flushbar(
-                            key:flushBarKey,
+                            key: flushBarKey,
                             borderColor: Colors.white,
                             showProgressIndicator: true,
-                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
+                            borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15)),
                             barBlur: 5,
                             flushbarPosition: FlushbarPosition.TOP,
                             flushbarStyle: FlushbarStyle.FLOATING,
@@ -362,16 +379,20 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                               child: Text(
                                 AppLocalizations.of(context)!.loading,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18),
+                                    fontWeight: FontWeight.w500, fontSize: 18),
                               ),
                             ),
                           ).show(context);
-            
-                          await api.getByName(name,'value.language'); // TODO language
-            
-                           (flushBarKey.currentWidget as Flushbar).dismiss();
-            
+                          // search drug using api for 10 seconde
+                          await Future.microtask(() => api.getByName(
+                                  name, AppLocalizations.of(context)!.local))
+                              .timeout(
+                            const Duration(seconds: 10),
+                            onTimeout: () => api.map.clear(),
+                          );
+
+                          (flushBarKey.currentWidget as Flushbar).dismiss();
+
                           if (api.map.isEmpty) {
                             Flushbar(
                               duration: const Duration(milliseconds: 2000),
@@ -393,9 +414,9 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                             ).show(context);
                             controller.clear();
                           } else {
-                            scanModalBottomSheet(
+                            _scanModalBottomSheet(
                                 context,
-                                 capitalize(controller.text),
+                                _capitalize(controller.text),
                                 'assets/images/drug_bottle.jpg',
                                 's');
                             controller.clear();
@@ -404,6 +425,7 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
                       },
                     ),
                   ],
+                  // scan image on button
                   child: Padding(
                     padding: const EdgeInsets.all(14.0),
                     child: image,
@@ -417,7 +439,25 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
     });
   }
 
-  Future<dynamic> scanModalBottomSheet(
+  // croping image
+  _cropImage(File x) async {
+    return await ImageCropper.platform
+        .cropImage(sourcePath: x.path, aspectRatioPresets: [
+      CropAspectRatioPreset.ratio16x9,
+    ], uiSettings: [
+      AndroidUiSettings(
+        toolbarTitle: AppLocalizations.of(context)!.selectName,
+        toolbarColor: Colors.lightGreen,
+        toolbarWidgetColor: Colors.white,
+        initAspectRatio: CropAspectRatioPreset.ratio16x9,
+        lockAspectRatio: false,
+        hideBottomControls: true,
+      )
+    ]);
+  }
+
+  // show data return from link
+  Future<dynamic> _scanModalBottomSheet(
       BuildContext context, String name, String image, String type) {
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -426,27 +466,13 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
         builder: (context) => ApiDraggableSheet(
             map: api.map, name: name, imageUrl: image, type: type));
   }
-}
 
-Future<String> saveImage(File image, String imagename) async {
-  String appPath = (await getApplicationDocumentsDirectory()).path;
-  File file = await image.copy('$appPath/$imagename.jpg');
-  return file.path;
-}
-
-
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.moveTo(size.width/8, size.height/8);
-    path.lineTo(size.width-size.width/8, size.height/8);
-    path.lineTo(size.width-size.width/8, size.height/4);
-   path.lineTo(size.width/8, size.height/4);
-     
-    path.close();
-    return path;
+  // capitalize first letter
+  String _capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+  // save drug image
+  Future<String> _saveImage(File image, String imagename) async {
+    String appPath = (await getApplicationDocumentsDirectory()).path;
+    File file = await image.copy('$appPath/$imagename.jpg');
+    return file.path;
   }
-  @override
-  bool shouldReclip(MyClipper oldClipper) => false;
 }

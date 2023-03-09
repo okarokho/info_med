@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:info_med/models/db_data.dart';
-import 'package:info_med/models/db_reminder.dart';
+import 'package:info_med/models/sql/db_data.dart';
+import 'package:info_med/models/sql/db_reminder.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -20,7 +20,6 @@ class DatabaseHelper with ChangeNotifier {
   final String _savedSideeffect = 'sideeffect';
   final String _savedImage = 'image';
   final String _savedType = 'type';
-  final String _savedLanguage = 'language';
   final String _reminderTableName = 'reminders';
   final String _reminderName = 'name';
   final String _reminderTimeFuture = 'timeFuture';
@@ -63,8 +62,7 @@ class DatabaseHelper with ChangeNotifier {
       $_savedInstruction TEXT NOT NULL,
       $_savedSideeffect TEXT NOT NULL,
       $_savedImage TEXT NOT NULL,
-      $_savedType TEXT NOT NULL,
-      $_savedLanguage TEXT NOT NULL
+      $_savedType TEXT NOT NULL
     )
 ''');
 

@@ -4,81 +4,66 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:info_med/models/drugs.dart';
-import 'package:info_med/models/image.dart';
-import 'package:info_med/models/second_api.dart';
-import 'package:info_med/util/database.dart';
+import 'package:info_med/models/hive/drug.dart';
+import 'package:info_med/util/image%20compression/image.dart';
+import 'package:info_med/models/api/second_api.dart';
+import 'package:info_med/util/database/database.dart';
 import 'package:info_med/pages/home/home.dart';
-import 'package:info_med/util/provider.dart';
-import 'package:info_med/util/shared_preference.dart';
+import 'package:info_med/util/provider/provider.dart';
+import 'package:info_med/util/provider/shared_preference.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 import 'l10n/l10n.dart';
+import 'util/kurdish localization/calender_localization.dart';
+import 'package:info_med/util/kurdish%20localization/kurdish_localization.dart';
 
-String kurdishDB='drug.hive';
-String arabicDB='drugs.hive';
-String englishDB='druges.hive';
+String _database = 'drugs.hive';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // create notification channel
+  AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+        channelKey: 'key1',
+        channelName: 'medication',
+        channelDescription: 'take_med',
+        enableLights: true,
+        playSound: true,
+        enableVibration: true,
+        ledColor: Colors.white,
+        soundSource: 'resource://raw/res_custom_notification',
+        importance: NotificationImportance.Max),
+  ]);
+
+  // initialize hive
   await Hive.initFlutter();
-  AwesomeNotifications().initialize(null, 
-  [
-    NotificationChannel(channelKey: 'key1', channelName: 'medication', channelDescription: 'take_med',
-     enableLights: true,
-     playSound: true,
-     enableVibration: true,
-     ledColor: Colors.white,
-     soundSource: 'resource://raw/res_custom_notification',
-     importance: NotificationImportance.Max), 
-  ]
-  );
-  
 
-
+  // register class adapter
   Hive.registerAdapter(DrugsAdapter());
-final directory = await getApplicationDocumentsDirectory();
-final fileKurdish = File('${directory.path}/$kurdishDB');
-final fileEnglish = File('${directory.path}/$englishDB');
-final fileArabic = File('${directory.path}/$arabicDB');
 
-existk() async {
- return  await fileKurdish.exists();
-}
-exista() async {
- return  await fileArabic.exists();
-}
-existe() async {
- return  await fileEnglish.exists();
-}
+  // get directory for database
+  final directory = await getApplicationDocumentsDirectory();
+  final file = File('${directory.path}/$_database');
 
-final result = await Future.wait([existk(),exista(),existe()]);
-final kexists = result[0];
-final aexists = result[1];
-final eexists = result[2];
+  // check if database exist
+  final result = await file.exists();
 
-if (!kexists) {
-  final data = await rootBundle.load('assets/data/$kurdishDB');
-  final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  await fileKurdish.writeAsBytes(bytes, flush: true);
-}
-if (!aexists) {
-  final data = await rootBundle.load('assets/data/$arabicDB');
-  final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  await fileArabic.writeAsBytes(bytes, flush: true);
-}
-if (!eexists) {
-  final data = await rootBundle.load('assets/data/$englishDB');
-  final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  await fileEnglish.writeAsBytes(bytes, flush: true);
-}
+  // if not exist then initialize
+  if (!result) {
+    final data = await rootBundle.load('assets/data/$_database');
+    final bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    await file.writeAsBytes(bytes, flush: true);
+  }
 
+  // open hive box
   await Hive.openBox<Drugs>('drugs');
-  await Hive.openBox<Drugs>('drug');
-  await Hive.openBox<Drugs>('druges');
 
+  // compress the default image
   Img();
 
   runApp(const MyApp());
@@ -89,19 +74,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-    //     overlays: [SystemUiOverlay.bottom]);
-     SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
+    // setting the orientation only to portraite
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    // add all necessary providers
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => SharedPreference(),
         ),
         ChangeNotifierProvider(
-          create: (context) => databaseHelper.instance,
+          create: (context) => DatabaseHelper.instance,
         ),
         ChangeNotifierProvider(
           create: (context) => DataProvider(),
@@ -120,12 +105,22 @@ class MyApp extends StatelessWidget {
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              KuCupertinoLocalizations.delegate,
+              KuMaterialLocalizations.delegate,
+              SfGlobalLocalizations.delegate,
+              SfLocalizationsKuDelegate()
             ],
             theme: ThemeData(primarySwatch: Colors.deepPurple),
+            builder: (context, child) => Directionality(
+                textDirection: value.language != L10n.all[0]
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+                child: Builder(
+                  builder: (context) => child!,
+                )),
             home: Home(),
-            
           );
         },
       ),

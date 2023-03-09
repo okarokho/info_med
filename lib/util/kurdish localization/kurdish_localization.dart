@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_custom.dart' as date_symbol_data_custom;
@@ -76,7 +76,7 @@ const kuDateSymbols = {
     'پێش زایین',
     'دوای زاین',
   ],
-  
+
   'NARROWMONTHS': <dynamic>[
     'ک',
     'ش',
@@ -179,10 +179,11 @@ const kuDateSymbols = {
     'هەینی',
     'شەمە',
   ],
+  // edited
   'SHORTWEEKDAYS': <dynamic>[
-    'یەک شەمە',
-    'دوو شەمە',
-    'سێ شەمە',
+    'یەک  شەمە',
+    'دوو  شەمە',
+    'سێ   شەمە',
     'چوار شەمە',
     'پێنج شەمە',
     'هەینی',
@@ -229,7 +230,7 @@ const kuDateSymbols = {
   ],
   'AMPMS': <dynamic>[
     'پێش نیوەڕۆ',
-    'دوا نیوەڕؤ',
+    'دوا نیوەڕۆ',
   ],
   'DATEFORMATS': <dynamic>[
     'EEEE d. MMMM y',
@@ -278,35 +279,40 @@ class _KuMaterialLocalizationsDelegate
       symbols: intl.DateSymbols.deserializeFromMap(kuDateSymbols),
     );
 
-    return SynchronousFuture<MaterialLocalizations>(
-      KuMaterialLocalizations(
-        localeName: localeName,
-        // The `intl` library's NumberFormat class is generated from CLDR data
-        // (see https://github.com/dart-lang/intl/blob/master/lib/number_symbols_data.dart).
-        // Unfortunately, there is no way to use a locale that isn't defined in
-        // this map and the only way to work around this is to use a listed
-        // locale's NumberFormat symbols. So, here we use the number formats
-        // for 'en_US' instead.
-        decimalFormat: intl.NumberFormat('#,##0.###', 'en_US'),
-        twoDigitZeroPaddedFormat: intl.NumberFormat('00', 'en_US'),
-        // DateFormat here will use the symbols and patterns provided in the
-        // `date_symbol_data_custom.initializeDateFormattingCustom` call above.
-        // However, an alternative is to simply use a supported locale's
-        // DateFormat symbols, similar to NumberFormat above.
-        fullYearFormat: intl.DateFormat('y', localeName),
-        compactDateFormat: intl.DateFormat('yMd', localeName),
-        shortDateFormat: intl.DateFormat('yMMMd', localeName),
-        mediumDateFormat: intl.DateFormat('EEE, MMM d', localeName),
-        longDateFormat: intl.DateFormat('EEEE, MMMM d, y', localeName),
-        yearMonthFormat: intl.DateFormat('MMMM y', localeName),
-        shortMonthDayFormat: intl.DateFormat('MMM d'),
-      ),
+    return KuMaterialLocalizations(
+      localeName: localeName,
+      decimalFormat: intl.NumberFormat('#,##0.###', 'en_US'),
+      twoDigitZeroPaddedFormat: intl.NumberFormat('00', 'en_US'),
+      fullYearFormat: intl.DateFormat('y', localeName),
+      compactDateFormat: intl.DateFormat('yMd', localeName),
+      shortDateFormat: intl.DateFormat('yMMMd', localeName),
+      mediumDateFormat: intl.DateFormat('EEE, MMM d', localeName),
+      longDateFormat: intl.DateFormat('EEEE, MMMM d, y', localeName),
+      yearMonthFormat: intl.DateFormat('MMMM y', localeName),
+      shortMonthDayFormat: intl.DateFormat('MMM d', localeName),
     );
   }
 
   @override
   bool shouldReload(_KuMaterialLocalizationsDelegate old) => false;
 }
+
+class _KuCupertinoLocalizationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const _KuCupertinoLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'ku';
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) async {
+    return KuCupertinoLocalizations();
+  }
+
+  @override
+  bool shouldReload(_KuCupertinoLocalizationsDelegate old) => false;
+}
+
 // #enddocregion Delegate
 
 /// A custom set of localizations for the 'nn' locale. In this example, only
@@ -340,7 +346,7 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
 // #enddocregion Getters
 
   @override
-  String get anteMeridiemAbbreviation => r'پێش نیوەڕؤ';
+  String get anteMeridiemAbbreviation => r'پێش نیوەڕۆ';
 
   @override
   String get backButtonTooltip => r'گەڕانەوە';
@@ -394,13 +400,13 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   String get modalBarrierDismissLabel => r'Dismiss';
 
   @override
-  String get nextMonthTooltip => r'Next month';
+  String get nextMonthTooltip => r'مانگی داهاتوو';
 
   @override
   String get nextPageTooltip => r'Next page';
 
   @override
-  String get okButtonLabel => r'OK';
+  String get okButtonLabel => r'باشە';
 
   @override
   // A custom drawer tooltip message.
@@ -416,7 +422,7 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
 // #enddocregion Raw
 
   @override
-  String get pasteButtonLabel => r'PASTE';
+  String get pasteButtonLabel => r'لکاندن';
 
   @override
   String get popupMenuLabel => r'Popup menu';
@@ -425,10 +431,10 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   String get menuBarMenuLabel => r'Menu Bar Label';
 
   @override
-  String get postMeridiemAbbreviation => r'دوا نیوەڕؤ';
+  String get postMeridiemAbbreviation => r'دوا نیوەڕۆ';
 
   @override
-  String get previousMonthTooltip => r'Previous month';
+  String get previousMonthTooltip => r'مانگی ڕابردوو';
 
   @override
   String get previousPageTooltip => r'Previous page';
@@ -480,7 +486,7 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   ScriptCategory get scriptCategory => ScriptCategory.englishLike;
 
   @override
-  String get searchFieldLabel => r'Search';
+  String get searchFieldLabel => r'گەڕان';
 
   @override
   String get selectAllButtonLabel => r'SELECT ALL';
@@ -592,22 +598,22 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   String get licensesPackageDetailTextOther => '\$licenseCount licenses';
 
   @override
-  String get saveButtonLabel => 'SAVE';
+  String get saveButtonLabel => 'خەزن بکە';
 
   @override
   String get selectYearSemanticsLabel => 'Select year';
 
   @override
-  String get timePickerDialHelpText => 'SELECT TIME';
+  String get timePickerDialHelpText => 'کات دیاریبکە';
 
   @override
-  String get timePickerHourLabel => 'Hour';
+  String get timePickerHourLabel => 'کاتژمێر';
 
   @override
   String get timePickerInputHelpText => 'ENTER TIME';
 
   @override
-  String get timePickerMinuteLabel => 'Minute';
+  String get timePickerMinuteLabel => 'خولەک';
 
   @override
   String get unspecifiedDate => 'Date';
@@ -754,4 +760,132 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
 
   @override
   String get keyboardKeySpace => throw UnimplementedError();
+}
+
+class KuCupertinoLocalizations extends CupertinoLocalizations {
+  static const LocalizationsDelegate<CupertinoLocalizations> delegate =
+      _KuCupertinoLocalizationsDelegate();
+
+  KuCupertinoLocalizations();
+
+  @override
+  DatePickerDateOrder get datePickerDateOrder => throw UnimplementedError();
+
+  @override
+  DatePickerDateTimeOrder get datePickerDateTimeOrder =>
+      throw UnimplementedError();
+
+  @override
+  String datePickerDayOfMonth(int dayIndex) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String datePickerHour(int hour) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String? datePickerHourSemanticsLabel(int hour) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String datePickerMediumDate(DateTime date) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String datePickerMinute(int minute) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String? datePickerMinuteSemanticsLabel(int minute) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String datePickerMonth(int monthIndex) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String datePickerYear(int yearIndex) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String get searchTextFieldPlaceholderLabel => throw UnimplementedError();
+
+  @override
+  String tabSemanticsLabel({required int tabIndex, required int tabCount}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String timerPickerHour(int hour) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String? timerPickerHourLabel(int hour) {
+    throw UnimplementedError();
+  }
+
+  @override
+  List<String> get timerPickerHourLabels => throw UnimplementedError();
+
+  @override
+  String timerPickerMinute(int minute) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String? timerPickerMinuteLabel(int minute) {
+    throw UnimplementedError();
+  }
+
+  @override
+  List<String> get timerPickerMinuteLabels => throw UnimplementedError();
+
+  @override
+  String timerPickerSecond(int second) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String? timerPickerSecondLabel(int second) {
+    throw UnimplementedError();
+  }
+
+  @override
+  List<String> get timerPickerSecondLabels => throw UnimplementedError();
+
+  @override
+  String get todayLabel => throw UnimplementedError();
+
+  @override
+  String get alertDialogLabel => throw UnimplementedError();
+
+  @override
+  String get anteMeridiemAbbreviation => throw UnimplementedError();
+
+  @override
+  String get copyButtonLabel => throw UnimplementedError();
+
+  @override
+  String get cutButtonLabel => throw UnimplementedError();
+
+  @override
+  String get modalBarrierDismissLabel => throw UnimplementedError();
+
+  @override
+  String get pasteButtonLabel => throw UnimplementedError();
+
+  @override
+  String get postMeridiemAbbreviation => throw UnimplementedError();
+
+  @override
+  String get selectAllButtonLabel => throw UnimplementedError();
 }
