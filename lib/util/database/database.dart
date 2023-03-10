@@ -112,7 +112,7 @@ class DatabaseHelper with ChangeNotifier {
     Database? db = await instance.saved;
 
     while (timePresent.compareTo(timeFuture) < 0) {
-      json['date'] = DateFormat('yyyy-MM-dd').format(timePresent);
+      json['date'] = DateFormat('yyyy-MM-dd', 'ku').format(timePresent);
       await db!
           .insert(_reminderTableName, json)
           .whenComplete(() => notifyListeners());

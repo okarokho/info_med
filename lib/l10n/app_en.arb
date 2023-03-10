@@ -9,6 +9,16 @@
       "description": "The current local"
     },
 
+    "cancel": "CANCEL",
+    "@cancel":{
+      "description": "cancel operation"
+    },
+
+    "ok": "OK",
+    "@ok":{
+      "description": "conferm operation"
+    },
+
     "search": "Search Medicine ...",
     "@search": {
       "description": "Search for Drug"
@@ -252,6 +262,16 @@
     "enterName": "Enter a Name",
     "@enterName":{
       "description": "Enter a Name"
+    },
+
+    "download": "Download",
+    "@download":{
+      "description": "Download"
+    },
+
+    "downloaded": "Downloaded to Gallery!",
+    "@downloaded":{
+      "description": "Downloaded image"
     }
     
 }

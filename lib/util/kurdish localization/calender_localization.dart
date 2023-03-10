@@ -62,7 +62,7 @@ class SfLocalizationsKu extends SfLocalizations {
   String get beginsWithDataGridFilteringLabel => r'١٠ئەمڕۆ';
 
   @override
-  String get cancelDataGridFilteringLabel => r'١٢ئەمڕۆ';
+  String get cancelDataGridFilteringLabel => r'پاشگەبوونەوە';
 
   @override
   String get clearFilterDataGridFilteringLabel => r'١٣ئەمڕۆ';
@@ -146,7 +146,7 @@ class SfLocalizationsKu extends SfLocalizations {
   String get ofDataPagerLabel => r'٣٦ئەمڕۆ';
 
   @override
-  String get okDataGridFilteringLabel => r'٣٧ئەمڕۆ';
+  String get okDataGridFilteringLabel => r'باشە';
 
   @override
   String get orDataGridFilteringLabel => r'٣٨ئەمڕۆ';
@@ -167,7 +167,7 @@ class SfLocalizationsKu extends SfLocalizations {
   String get passwordDialogInvalidPasswordLabel => r'٤٣ئەمڕۆ';
 
   @override
-  String get pdfBookmarksLabel => r'٤٤ئەمڕۆ';
+  String get pdfBookmarksLabel => r'باشە';
 
   @override
   String get pdfEnterPageNumberLabel => r'٤٥ئەمڕۆ';
@@ -179,7 +179,7 @@ class SfLocalizationsKu extends SfLocalizations {
   String get pdfHyperlinkContentLabel => r'٤٧ئەمڕۆ';
 
   @override
-  String get pdfHyperlinkDialogCancelLabel => r'٤٨ئەمڕۆ';
+  String get pdfHyperlinkDialogCancelLabel => r'پاشگەبوونەوە';
 
   @override
   String get pdfHyperlinkDialogOpenLabel => r'٤٩ئەمڕۆ';
@@ -191,16 +191,16 @@ class SfLocalizationsKu extends SfLocalizations {
   String get pdfInvalidPageNumberLabel => r'٥١ئەمڕۆ';
 
   @override
-  String get pdfNoBookmarksLabel => r'٥٢ئەمڕۆ';
+  String get pdfNoBookmarksLabel => r'باشە';
 
   @override
-  String get pdfPaginationDialogCancelLabel => r'٥٣ئەمڕۆ';
+  String get pdfPaginationDialogCancelLabel => r'پاشگەبوونەوە';
 
   @override
-  String get pdfPaginationDialogOkLabel => r'٥٤ئەمڕۆ';
+  String get pdfPaginationDialogOkLabel => r'باشە';
 
   @override
-  String get pdfPasswordDialogCancelLabel => r'٥٥ئەمڕۆ';
+  String get pdfPasswordDialogCancelLabel => r'پاشگەبوونەوە';
 
   @override
   String get pdfPasswordDialogOpenLabel => r'٥٦ئەمڕۆ';

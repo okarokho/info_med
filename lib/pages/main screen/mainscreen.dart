@@ -6,7 +6,6 @@ import 'package:info_med/widgets/draggable/grid_draggable_sheet.dart';
 import 'package:info_med/widgets/scaffold/title_text.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../constants/colors.dart';
 import '../../constants/drugs.dart';
 import '../../models/hive/box.dart';
 import 'widget/image_card.dart';
@@ -83,7 +82,9 @@ class _MainState extends State<Main> {
                             .toList();
                       });
                     } else {
-                      _filtered.clear();
+                      setState(() {
+                        _filtered.clear();
+                      });
                     }
                   },
                 ),
@@ -153,17 +154,15 @@ class _MainState extends State<Main> {
                             selectedIndex: data.listIndex),
                         CategoryChip(
                             currentIndex: 9,
-                            padding:
-                                AppLocalizations.of(context)!.language == 'عربي'
-                                    ? 6
-                                    : 10,
+                            padding: AppLocalizations.of(context)!.local == 'ar'
+                                ? 6
+                                : 10,
                             text: AppLocalizations.of(context)!.stomach,
                             temp: stomach,
                             selectedIndex: data.listIndex),
                         CategoryChip(
                             currentIndex: 10,
-                            padding: AppLocalizations.of(context)!.language ==
-                                    'کوردی'
+                            padding: AppLocalizations.of(context)!.local == 'ku'
                                 ? 6
                                 : 10,
                             text: AppLocalizations.of(context)!.antiDepressant,
@@ -177,8 +176,7 @@ class _MainState extends State<Main> {
                             selectedIndex: data.listIndex),
                         CategoryChip(
                             currentIndex: 12,
-                            padding: AppLocalizations.of(context)!.language ==
-                                    'کوردی'
+                            padding: AppLocalizations.of(context)!.local == 'ku'
                                 ? 6
                                 : 10,
                             text: AppLocalizations.of(context)!.painKiller,
@@ -222,7 +220,7 @@ class _MainState extends State<Main> {
                                     : data.listIndex == 12
                                         ? data.tempList.length * 132
                                         : data.listIndex == 1
-                                            ? data.tempList.length * 39.9
+                                            ? data.tempList.length * 99
                                             : data.listIndex == 4
                                                 ? data.tempList.length * 104.5
                                                 : data.listIndex == 5
@@ -230,79 +228,36 @@ class _MainState extends State<Main> {
                                                     : data.tempList.length *
                                                         135,
                         // show categories
-                        child: data.listIndex != 1
-                            ? GridView.count(
-                                physics: const NeverScrollableScrollPhysics(),
-                                crossAxisCount: 2,
-                                padding: const EdgeInsets.only(
-                                    left: 4, right: 4, top: 8),
-                                children: List.generate(
-                                  data.tempList.length,
-                                  (index) {
-                                    // get the drug in local database based n current language
-                                    final boxInstance = Boxes.getBox()
-                                        .values
-                                        .where((element) =>
-                                            element.name ==
-                                                data.tempList[index] &&
-                                            element.language ==
-                                                AppLocalizations.of(context)!
-                                                    .local);
-                                    return Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            _name = data.tempList[index];
-                                            _modalBottomSheet();
-                                          },
-                                          child: ImageCard(
-                                              img: boxInstance.first.image
-                                                  .toString(),
-                                              name: data.tempList[index])),
-                                    );
-                                  },
-                                ),
-                              )
-                            // show all drugs
-                            : Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0),
-                                child: GridView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.only(top: 24),
-                                  itemCount: data.tempList.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          mainAxisExtent: 60,
-                                          mainAxisSpacing: 16.0,
-                                          crossAxisSpacing: 12),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Container(
-                                          color: Colors.grey[200],
-                                          child: ListTile(
-                                            leading: const Icon(
-                                                Icons.medication_liquid_rounded,
-                                                color: purple),
-                                            horizontalTitleGap: 0,
-                                            // when taping open bottom sheet
-                                            onTap: () {
-                                              setState(() {
-                                                _name = data.tempList[index];
-                                                _modalBottomSheet();
-                                              });
-                                            },
-                                            title: Text(data.tempList[index],
-                                                style: const TextStyle(
-                                                    fontSize: 14.2)),
-                                          )),
-                                    );
-                                  },
-                                ),
-                              ))
+                        child: GridView.count(
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          padding:
+                              const EdgeInsets.only(left: 4, right: 4, top: 8),
+                          children: List.generate(
+                            data.tempList.length,
+                            (index) {
+                              // get the drug in local database based n current language
+                              final boxInstance = Boxes.getBox().values.where(
+                                  (element) =>
+                                      element.name == data.tempList[index] &&
+                                      element.language ==
+                                          AppLocalizations.of(context)!.local);
+                              return Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: GestureDetector(
+                                    onTap: () {
+                                      _name = data.tempList[index];
+                                      _modalBottomSheet();
+                                    },
+                                    child: ImageCard(
+                                        img: boxInstance.first.image.toString(),
+                                        name: data.tempList[index])),
+                              );
+                            },
+                          ),
+                        )
+                        // show all drugs
+                        )
                     // filtered drug grid view
                     : SizedBox(
                         height:
@@ -324,8 +279,7 @@ class _MainState extends State<Main> {
                                   final boxInstance = Boxes.getBox()
                                       .values
                                       .where((element) =>
-                                          element.name ==
-                                              data.tempList[index] &&
+                                          element.name == _filtered[index] &&
                                           element.language ==
                                               AppLocalizations.of(context)!
                                                   .local);
@@ -339,7 +293,7 @@ class _MainState extends State<Main> {
                                         child: ImageCard(
                                             img: boxInstance.first.image
                                                 .toString(),
-                                            name: data.tempList[index])),
+                                            name: _filtered[index])),
                                   );
                                 }),
                               ),

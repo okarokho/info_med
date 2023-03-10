@@ -229,8 +229,8 @@ const kuDateSymbols = {
     'چارەکی چوارەم',
   ],
   'AMPMS': <dynamic>[
-    'پێش نیوەڕۆ',
-    'دوا نیوەڕۆ',
+    'بەیانی',
+    'نیوەڕۆ',
   ],
   'DATEFORMATS': <dynamic>[
     'EEEE d. MMMM y',
@@ -333,7 +333,7 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
     required super.twoDigitZeroPaddedFormat,
   });
 
-// #docregion Getters
+  // #docregion Getters
   @override
   String get moreButtonTooltip => r'زیاتر';
 
@@ -343,10 +343,10 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   @override
   String get alertDialogLabel => r'ئاگاداری';
 
-// #enddocregion Getters
+  // #enddocregion Getters
 
   @override
-  String get anteMeridiemAbbreviation => r'پێش نیوەڕۆ';
+  String get anteMeridiemAbbreviation => r'بەیانی';
 
   @override
   String get backButtonTooltip => r'گەڕانەوە';
@@ -412,14 +412,14 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   // A custom drawer tooltip message.
   String get openAppDrawerTooltip => r'Custom Navigation Menu Tooltip';
 
-// #docregion Raw
+  // #docregion Raw
   @override
   String get pageRowsInfoTitleRaw => r'$firstRow–$lastRow of $rowCount';
 
   @override
   String get pageRowsInfoTitleApproximateRaw =>
       r'$firstRow–$lastRow of about $rowCount';
-// #enddocregion Raw
+  // #enddocregion Raw
 
   @override
   String get pasteButtonLabel => r'لکاندن';
@@ -431,7 +431,7 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
   String get menuBarMenuLabel => r'Menu Bar Label';
 
   @override
-  String get postMeridiemAbbreviation => r'دوا نیوەڕۆ';
+  String get postMeridiemAbbreviation => r'نیوەڕۆ';
 
   @override
   String get previousMonthTooltip => r'مانگی ڕابردوو';
@@ -535,7 +535,7 @@ class KuMaterialLocalizations extends GlobalMaterialLocalizations {
 
   @override
   List<String> get narrowWeekdays =>
-      const <String>['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+      const <String>['Y', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   @override
   int get firstDayOfWeekIndex => 0;

@@ -64,10 +64,9 @@ class _MyFABState extends State<MyFAB> {
           alignment: Alignment.bottomCenter,
           child: Material(
             elevation: 5,
+            color: purple,
             borderRadius: BorderRadius.circular(100),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100), color: purple),
+            child: SizedBox(
               height: 64,
               width: 64,
               child: Consumer<SharedPreference>(
@@ -137,7 +136,7 @@ class _MyFABState extends State<MyFAB> {
                               backgroundColor:
                                   Colors.grey[350]!.withOpacity(0.5),
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 70, vertical: 4),
+                                  horizontal: 70, vertical: 3),
                               messageText: Center(
                                 child: Text(
                                   AppLocalizations.of(context)!.loading,
@@ -151,7 +150,7 @@ class _MyFABState extends State<MyFAB> {
                             await Future.microtask(() => api.getByName(
                                     name, AppLocalizations.of(context)!.local))
                                 .timeout(
-                              const Duration(seconds: 10),
+                              const Duration(seconds: 20),
                               onTimeout: () => api.map.clear(),
                             );
 
@@ -240,7 +239,7 @@ class _MyFABState extends State<MyFAB> {
                               backgroundColor:
                                   Colors.grey[350]!.withOpacity(0.5),
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 75, vertical: 4),
+                                  horizontal: 75, vertical: 3),
                               messageText: Center(
                                 child: Text(
                                   AppLocalizations.of(context)!.loading,
@@ -254,7 +253,7 @@ class _MyFABState extends State<MyFAB> {
                             await Future.microtask(() => api.getByName(
                                     name, AppLocalizations.of(context)!.local))
                                 .timeout(
-                              const Duration(seconds: 10),
+                              const Duration(seconds: 20),
                               onTimeout: () => api.map.clear(),
                             );
 
@@ -374,7 +373,7 @@ class _MyFABState extends State<MyFAB> {
                             reverseAnimationCurve: Curves.easeOut,
                             backgroundColor: Colors.grey[350]!.withOpacity(0.5),
                             margin: const EdgeInsets.symmetric(
-                                horizontal: 70, vertical: 4),
+                                horizontal: 70, vertical: 3),
                             messageText: Center(
                               child: Text(
                                 AppLocalizations.of(context)!.loading,
@@ -387,7 +386,7 @@ class _MyFABState extends State<MyFAB> {
                           await Future.microtask(() => api.getByName(
                                   name, AppLocalizations.of(context)!.local))
                               .timeout(
-                            const Duration(seconds: 10),
+                            const Duration(seconds: 20),
                             onTimeout: () => api.map.clear(),
                           );
 

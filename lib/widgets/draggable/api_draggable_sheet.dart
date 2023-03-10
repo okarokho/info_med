@@ -364,8 +364,7 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
   }
 
   // check whether the drug is saved or not
-  // ignore: iterable_contains_unrelated_type
-  bool _exist() => _names.contains(widget.name.toString());
+  bool _exist() => _names.any((e) => e.name == widget.name.toString());
 }
 
 // based on type of image return specific image widget

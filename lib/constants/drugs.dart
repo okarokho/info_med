@@ -110,11 +110,11 @@ const List<String> drugs = [
   'Zyrtec'
 ];
 const List<String> heart = [
-'Accupril',
-'Altace',
-'Atenolol',
-'Avapro',
-'Cozaar',
+  'Accupril',
+  'Altace',
+  'Atenolol',
+  'Avapro',
+  'Cozaar',
   'Cardura',
   'Clonidine',
   'Coumadin',
@@ -142,23 +142,24 @@ const List<String> heart = [
   'Ziac',
   'Zocor'
 ];
-const List<String> stomach =[
+const List<String> stomach = [
   'Aciphex',
   'Pepcid',
   'Potassium Chloride',
   'Prednisone',
   'Prevacid',
-  'Prilosec'];
-const List<String> diabetes =[
-  "Actos","Amaryl","Glyburide"];
-const List<String> stimulants =[
+  'Prilosec'
+];
+const List<String> diabetes = ["Actos", "Amaryl", "Glyburide"];
+const List<String> stimulants = [
   "Adderall",
-  "Amaryl", 
+  "Amaryl",
   'Amphetamine',
   'Methamphetamine',
   'Methylphenidate',
-  'Ritalin'];
-const List<String> antinflammatory =[ 
+  'Ritalin'
+];
+const List<String> antinflammatory = [
   'Allegra',
   'Allegra-D',
   'Celebrex',
@@ -171,52 +172,62 @@ const List<String> antinflammatory =[
   'Promethazine',
   'Relafen',
   'Singulair',
-  'Zyrtec'];
-const List<String> antidepressants =[ 
-    'Alprazolam',
+  'Zyrtec'
+];
+const List<String> antidepressants = [
+  'Alprazolam',
   'Amitriptyline HCL',
   'Celexa',
   'Clonazepam',
   'Diazepam',
   'Paxil',
   'Prozac',
-  'Zoloft'];
-const List<String> sleepDisorder =[
+  'Zoloft'
+];
+const List<String> sleepDisorder = [
   'Ambien',
   'Lorazepam',
   'Phenergan',
-  'Temazepam'];
-const List<String> antibiotec =[ 
+  'Temazepam'
+];
+const List<String> antibiotec = [
   'Augmentin',
   'Cipro',
   'Diflucan',
   'Macrobid',
-  'Zithromax'];
-const List<String> painKiller =[ 
-   'Carisoprodol',
+  'Zithromax'
+];
+const List<String> painKiller = [
+  'Carisoprodol',
   'Cyclobenzaprine',
   'Hydrocodone',
   'Ibuprofen',
   'Oxycodone',
   'OxyContin',
-  'Ultram'];
-const List<String> seizure =[ 
-    'Depakote',
+  'Ultram'
+];
+const List<String> seizure = [
+  'Depakote',
   'Dilantin',
   'Imitrex',
   'Neurontin',
-  'Oxcarbazepine'];
-const List<String> hormons =[  
+  'Oxcarbazepine'
+];
+const List<String> hormons = [
   'Levoxyl',
   'Premarin',
   'Synthroid',
   'Climara',
-  'Medroxyprogesterone'];
-const List<String> eye =[
-  "Alphagan","Tobradex","Xalatan"];
-const List<String> lungs =[
-  "Atrovent","Combivent",'Proventil HFA',"Serevent"];
-const List<String> others =[ 
+  'Medroxyprogesterone'
+];
+const List<String> eye = ["Alphagan", "Tobradex", "Xalatan"];
+const List<String> lungs = [
+  "Atrovent",
+  "Combivent",
+  'Proventil HFA',
+  "Serevent"
+];
+const List<String> others = [
   'Aricept',
   'Allopurinol',
   'Folic Acid',
@@ -226,4 +237,14 @@ const List<String> others =[
   'Nasonex',
   'Risperdal',
   'Viagra',
-  'Zyprexa'];
+  'Zyprexa'
+];
+const List<String> weekdays = [
+  'یەک شەمە',
+  'دوو شەمە',
+  'سێ شەمە',
+  'چوار شەمە',
+  'پێنج شەمە',
+  'هەینی',
+  'شەمە',
+];

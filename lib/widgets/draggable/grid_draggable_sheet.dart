@@ -133,10 +133,12 @@ class _MyDraggableSCrollableSheetState
                                                                       seconds:
                                                                           2),
                                                               messageText:
-                                                                  const Center(
+                                                                  Center(
                                                                       child:
                                                                           Text(
-                                                                'Downloaded to Gallery!',
+                                                                AppLocalizations.of(
+                                                                        context)!
+                                                                    .downloaded,
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .white),
@@ -146,10 +148,12 @@ class _MyDraggableSCrollableSheetState
                                                         },
                                                         itemBuilder:
                                                             (context) => [
-                                                          const PopupMenuItem(
+                                                          PopupMenuItem(
                                                             value: 'download',
                                                             child: Text(
-                                                                'Download'),
+                                                                AppLocalizations.of(
+                                                                        context)!
+                                                                    .download),
                                                           ),
                                                         ],
                                                         icon: const Icon(
@@ -384,9 +388,8 @@ class _MyDraggableSCrollableSheetState
   }
 
   // check whether the drug is saved or not
-  // ignore: iterable_contains_unrelated_type
-  bool _exist() => _names.contains(widget.name.toString());
-// check and set the toogle flag
+  bool _exist() => _names.any((e) => e.name == widget.name.toString());
+  // check and set the toogle flag
   Future _initilize() async {
     // get all the saved drug in the database
     _names = await DatabaseHelper.instance.selectSaved();

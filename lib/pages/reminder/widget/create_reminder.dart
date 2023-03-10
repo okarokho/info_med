@@ -1,6 +1,7 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:info_med/constants/drugs.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -114,9 +115,9 @@ class _AddMedicineState extends State<AddMedicine> {
             : _listOfTypeKurdish;
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.755,
+      initialChildSize: 0.765,
       minChildSize: 0.3,
-      maxChildSize: 0.755,
+      maxChildSize: 0.765,
       builder: (context, scrollController) => ClipRRect(
         borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30), topRight: Radius.circular(30)),
@@ -375,11 +376,17 @@ class _AddMedicineState extends State<AddMedicine> {
                           final test = await showCalendarDatePicker2Dialog(
                             context: context,
                             config: CalendarDatePicker2WithActionButtonsConfig(
-                                calendarType: CalendarDatePicker2Type.range,
-                                firstDayOfWeek: 1,
-                                lastDate: DateTime(DateTime.now().year,
-                                    DateTime.now().month, DateTime.now().day)),
-                            dialogSize: const Size(325, 400),
+                              calendarType: CalendarDatePicker2Type.range,
+                              firstDayOfWeek:
+                                  AppLocalizations.of(context)!.local == 'en'
+                                      ? 1
+                                      : 6,
+                              weekdayLabels:
+                                  AppLocalizations.of(context)!.local == 'ku'
+                                      ? weekdays
+                                      : null,
+                            ),
+                            dialogSize: const Size(300, 425),
                             initialValue: [DateTime.now()],
                             borderRadius: BorderRadius.circular(15),
                           );
@@ -407,7 +414,7 @@ class _AddMedicineState extends State<AddMedicine> {
                             children: [
                               Text(
                                 _dateFlage == true
-                                    ? DateFormat("dd.MM")
+                                    ? DateFormat("dd.MM", 'ku')
                                         .format(_pickedDate![1]!)
                                     : AppLocalizations.of(context)!.empty,
                                 style: const TextStyle(
@@ -455,7 +462,7 @@ class _AddMedicineState extends State<AddMedicine> {
                               _pickedTime!.minute);
                           var test = DbReminder(
                               name: _name.text.trim(),
-                              date: DateFormat('yyyy-MM-dd')
+                              date: DateFormat('yyyy-MM-dd', 'ku')
                                   .format(_pickedDate![1]!),
                               timeFuture: temp2,
                               timePresent: temp,
