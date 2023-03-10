@@ -139,7 +139,7 @@ class _MyDraggableSCrollableSheetState
                                                                 AppLocalizations.of(
                                                                         context)!
                                                                     .downloaded,
-                                                                style: TextStyle(
+                                                                style: const TextStyle(
                                                                     color: Colors
                                                                         .white),
                                                               )),
