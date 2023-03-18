@@ -17,7 +17,7 @@ class MyAppBar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       leadingWidth: 60,
       elevation: 0,
-      // rigth icon info
+      // right icon info
       actions: [
         Padding(
           padding: AppLocalizations.of(context)!.language != 'English' ? const EdgeInsets.only(left: 10.3, top: 4) : const EdgeInsets.only(right: 10.3, top: 4),

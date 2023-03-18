@@ -223,15 +223,18 @@ class _ApiDraggableSheetState extends State<ApiDraggableSheet> {
                                             if (!_toggle) _toggle = !_toggle;
                                             if (_toggle && !_exist()) {
                                               var test = DbData(
-                                                name: widget.name,
-                                                description:
-                                                    widget.map['description'],
-                                                instruction:
-                                                    widget.map['instruction'],
-                                                sideeffect: widget.map['side'],
-                                                image: widget.imageUrl,
-                                                type: widget.type,
-                                              );
+                                                  name: widget.name,
+                                                  description:
+                                                      widget.map['description'],
+                                                  instruction:
+                                                      widget.map['instruction'],
+                                                  sideeffect:
+                                                      widget.map['side'],
+                                                  image: widget.imageUrl,
+                                                  type: widget.type,
+                                                  language: AppLocalizations.of(
+                                                          context)!
+                                                      .local);
                                               db.insertSaved(test.tojson());
                                               context
                                                   .read<DataProvider>()

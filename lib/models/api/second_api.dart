@@ -23,19 +23,24 @@ class Get with ChangeNotifier {
   }
 
   // get the link of the drug page
-  getByName(String search, String language) async {
+  getByName(String? search, String language) async {
+    if (search == null) return;
     final url = Uri.parse(
         'https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.69&mainSearchCriteria.v.dn=$search&informationRecipient.languageCode.c=en');
 
     final response = await client.get(url);
     dom.Document html = dom.Document.html(response.body);
 
-    String link = html
-        .querySelectorAll(
-            '#results-body > div > div:nth-child(1) > p > span > a')
-        .map((e) => e.innerHtml)
-        .first;
-    await _getWebsiteData(link, language);
+    try {
+      String link = html
+          .querySelectorAll(
+              '#results-body > div > div:nth-child(1) > p > span > a')
+          .map((e) => e.innerHtml)
+          .first;
+      await _getWebsiteData(link, language);
+    } catch (e) {
+      return;
+    }
   }
 
   // get the information in the drug page & translate

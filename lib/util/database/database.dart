@@ -19,6 +19,7 @@ class DatabaseHelper with ChangeNotifier {
   final String _savedInstruction = 'instruction';
   final String _savedSideeffect = 'sideeffect';
   final String _savedImage = 'image';
+  final String _savedLanguage = 'language';
   final String _savedType = 'type';
   final String _reminderTableName = 'reminders';
   final String _reminderName = 'name';
@@ -62,6 +63,7 @@ class DatabaseHelper with ChangeNotifier {
       $_savedInstruction TEXT NOT NULL,
       $_savedSideeffect TEXT NOT NULL,
       $_savedImage TEXT NOT NULL,
+      $_savedLanguage TEXT NOT NULL,
       $_savedType TEXT NOT NULL
     )
 ''');

@@ -6,9 +6,9 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:info_med/constants/colors.dart';
 import 'package:info_med/models/api/second_api.dart';
+import 'package:info_med/util/provider/provider.dart';
 import 'package:info_med/util/scan%20util/image_picker.dart';
 import 'package:info_med/util/scan%20util/ml_text_recognition.dart';
 import 'package:info_med/util/provider/shared_preference.dart';
@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../models/hive/box.dart';
+import '../../util/scan util/crop_image.dart';
 import '../camera/camera_overlay.dart';
 
 class MyFAB extends StatefulWidget {
@@ -37,12 +38,13 @@ class _MyFABState extends State<MyFAB> {
   final textDetector = TextDetection();
   // api object
   final api = Get();
+  // image cropper object
+  final cropper = Crop();
   // textField controller
   final TextEditingController controller = TextEditingController();
   // global key for controlling flushbar state
   final GlobalKey flushBarKey = GlobalKey();
-  // croped image
-  CroppedFile? dd;
+
   @override
   void initState() {
     super.initState();
@@ -69,8 +71,8 @@ class _MyFABState extends State<MyFAB> {
             child: SizedBox(
               height: 64,
               width: 64,
-              child: Consumer<SharedPreference>(
-                builder: (context, value, child) => SpeedDial(
+              child: Consumer2<SharedPreference, DataProvider>(
+                builder: (context, value, data, child) => SpeedDial(
                   elevation: 0.0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32)),
@@ -89,7 +91,6 @@ class _MyFABState extends State<MyFAB> {
                         api.map.clear();
                         imagePicker.image = null;
                         Camera.test == null;
-                        dd = null;
                         // open camera
                         await availableCameras().then((value) => Navigator.push(
                             context,
@@ -98,7 +99,8 @@ class _MyFABState extends State<MyFAB> {
                             )));
                         // crop image
                         if (Camera.test != null) {
-                          dd = await _cropImage(File(Camera.test!.path));
+                          final dd = await cropper.cropImage(
+                              File(Camera.test!.path), context);
                           // read text
                           await textDetector
                               .recongnizeTextInImage(XFile(dd!.path));
@@ -109,6 +111,11 @@ class _MyFABState extends State<MyFAB> {
                                   element.name == name &&
                                   element.language ==
                                       AppLocalizations.of(context)!.local);
+                          // check saved database to see if the drug exist
+                          final saved = data.listFavored.where((element) =>
+                              element.name == name &&
+                              element.language ==
+                                  AppLocalizations.of(context)!.local);
                           // if in database
                           if (boxInstance.isNotEmpty) {
                             showModalBottomSheet(
@@ -118,6 +125,23 @@ class _MyFABState extends State<MyFAB> {
                               builder: (context) => MyDraggableSCrollableSheet(
                                 name: name,
                               ),
+                            );
+                          } else if (saved.isNotEmpty) {
+                            final map = {
+                              "description": saved.first.description,
+                              "instruction": saved.first.instruction,
+                              "side": saved.first.sideeffect,
+                              'language': saved.first.language
+                            };
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => ApiDraggableSheet(
+                                  map: map,
+                                  name: name,
+                                  imageUrl: saved.first.image!,
+                                  type: saved.first.type!),
                             );
                           } else {
                             Flushbar(
@@ -146,7 +170,7 @@ class _MyFABState extends State<MyFAB> {
                                 ),
                               ),
                             ).show(context);
-                            // search drug using api for 10 seconde
+                            // search drug using api for 20 seconde
                             await Future.microtask(() => api.getByName(
                                     name, AppLocalizations.of(context)!.local))
                                 .timeout(
@@ -159,19 +183,28 @@ class _MyFABState extends State<MyFAB> {
                             if (api.map.isEmpty) {
                               Flushbar(
                                 duration: const Duration(milliseconds: 2000),
-                                borderRadius: BorderRadius.circular(15),
+                                borderWidth: 2,
+                                borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15)),
                                 barBlur: 5,
+                                flushbarPosition: FlushbarPosition.TOP,
                                 backgroundColor:
                                     Colors.grey[350]!.withOpacity(0.5),
                                 borderColor: Colors.white,
+                                flushbarStyle: FlushbarStyle.FLOATING,
+                                animationDuration:
+                                    const Duration(milliseconds: 400),
+                                reverseAnimationCurve: Curves.easeOut,
                                 margin: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 2),
+                                    horizontal: 62, vertical: 3),
                                 messageText: Center(
                                   child: Text(
                                     AppLocalizations.of(context)!.sorryNotFound,
+                                    textAlign: TextAlign.center,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15),
+                                        fontSize: 14.6),
                                   ),
                                 ),
                               ).show(context);
@@ -195,12 +228,12 @@ class _MyFABState extends State<MyFAB> {
                         textDetector.scannedText = '';
                         api.map.clear();
                         imagePicker.image = null;
-                        dd = null;
                         // open gallery
                         await imagePicker.pickiImageGallery();
                         // crop image
                         if (imagePicker.image != null) {
-                          dd = await _cropImage(imagePicker.image!);
+                          final dd = await cropper.cropImage(
+                              imagePicker.image!, context);
                           // read text
                           await textDetector
                               .recongnizeTextInImage(XFile(dd!.path));
@@ -212,6 +245,11 @@ class _MyFABState extends State<MyFAB> {
                                   element.name == name &&
                                   element.language ==
                                       AppLocalizations.of(context)!.local);
+                          // check saved database to see if the drug exist
+                          final saved = data.listFavored.where((element) =>
+                              element.name == name &&
+                              element.language ==
+                                  AppLocalizations.of(context)!.local);
                           // if in database
                           if (boxInstance.isNotEmpty) {
                             showModalBottomSheet(
@@ -221,6 +259,23 @@ class _MyFABState extends State<MyFAB> {
                               builder: (context) => MyDraggableSCrollableSheet(
                                 name: name,
                               ),
+                            );
+                          } else if (saved.isNotEmpty) {
+                            final map = {
+                              "description": saved.first.description,
+                              "instruction": saved.first.instruction,
+                              "side": saved.first.sideeffect,
+                              'language': saved.first.language
+                            };
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => ApiDraggableSheet(
+                                  map: map,
+                                  name: name,
+                                  imageUrl: saved.first.image!,
+                                  type: saved.first.type!),
                             );
                           } else {
                             Flushbar(
@@ -249,7 +304,7 @@ class _MyFABState extends State<MyFAB> {
                                 ),
                               ),
                             ).show(context);
-                            // search drug using api for 10 seconde
+                            // search drug using api for 20 seconde
                             await Future.microtask(() => api.getByName(
                                     name, AppLocalizations.of(context)!.local))
                                 .timeout(
@@ -262,19 +317,28 @@ class _MyFABState extends State<MyFAB> {
                             if (api.map.isEmpty) {
                               Flushbar(
                                 duration: const Duration(milliseconds: 2000),
-                                borderRadius: BorderRadius.circular(15),
+                                borderWidth: 2,
+                                borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15)),
                                 barBlur: 5,
+                                flushbarPosition: FlushbarPosition.TOP,
                                 backgroundColor:
                                     Colors.grey[350]!.withOpacity(0.5),
                                 borderColor: Colors.white,
+                                flushbarStyle: FlushbarStyle.FLOATING,
+                                animationDuration:
+                                    const Duration(milliseconds: 400),
+                                reverseAnimationCurve: Curves.easeOut,
                                 margin: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 2),
+                                    horizontal: 62, vertical: 3),
                                 messageText: Center(
                                   child: Text(
                                     AppLocalizations.of(context)!.sorryNotFound,
+                                    textAlign: TextAlign.center,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15),
+                                        fontSize: 14.6),
                                   ),
                                 ),
                               ).show(context);
@@ -293,7 +357,7 @@ class _MyFABState extends State<MyFAB> {
                     // text search
                     SpeedDialChild(
                       child: const Icon(Icons.text_fields_rounded),
-                      label: AppLocalizations.of(context)!.searchName,
+                      label: AppLocalizations.of(context)!.searchText,
                       onTap: () async {
                         api.map.clear();
                         // show textField
@@ -341,12 +405,17 @@ class _MyFABState extends State<MyFAB> {
                         );
 
                         String name = _capitalize(controller.text.trim());
-                        // get the drug in local database based n current language
+                        // get the drug in local database based on current language
                         final boxInstance = Boxes.getBox().values.where(
                             (element) =>
                                 element.name == name &&
                                 element.language ==
                                     AppLocalizations.of(context)!.local);
+                        // check saved database to see if the drug exist
+                        final saved = data.listFavored.where((element) =>
+                            element.name == name &&
+                            element.language ==
+                                AppLocalizations.of(context)!.local);
                         // if in database
                         if (boxInstance.isNotEmpty) {
                           showModalBottomSheet(
@@ -356,6 +425,23 @@ class _MyFABState extends State<MyFAB> {
                             builder: (context) => MyDraggableSCrollableSheet(
                               name: name,
                             ),
+                          );
+                        } else if (saved.isNotEmpty) {
+                          final map = {
+                            "description": saved.first.description,
+                            "instruction": saved.first.instruction,
+                            "side": saved.first.sideeffect,
+                            'language': saved.first.language
+                          };
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => ApiDraggableSheet(
+                                map: map,
+                                name: name,
+                                imageUrl: saved.first.image!,
+                                type: saved.first.type!),
                           );
                         } else {
                           Flushbar(
@@ -382,7 +468,7 @@ class _MyFABState extends State<MyFAB> {
                               ),
                             ),
                           ).show(context);
-                          // search drug using api for 10 seconde
+                          // search drug using api for 20 seconde
                           await Future.microtask(() => api.getByName(
                                   name, AppLocalizations.of(context)!.local))
                               .timeout(
@@ -395,19 +481,28 @@ class _MyFABState extends State<MyFAB> {
                           if (api.map.isEmpty) {
                             Flushbar(
                               duration: const Duration(milliseconds: 2000),
-                              borderRadius: BorderRadius.circular(15),
+                              borderWidth: 2,
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15)),
                               barBlur: 5,
-                              borderColor: Colors.white,
+                              flushbarPosition: FlushbarPosition.TOP,
                               backgroundColor:
                                   Colors.grey[350]!.withOpacity(0.5),
+                              borderColor: Colors.white,
+                              flushbarStyle: FlushbarStyle.FLOATING,
+                              animationDuration:
+                                  const Duration(milliseconds: 400),
+                              reverseAnimationCurve: Curves.easeOut,
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 2),
+                                  horizontal: 62, vertical: 3),
                               messageText: Center(
                                 child: Text(
                                   AppLocalizations.of(context)!.sorryNotFound,
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 15),
+                                      fontSize: 14.6),
                                 ),
                               ),
                             ).show(context);
@@ -436,23 +531,6 @@ class _MyFABState extends State<MyFAB> {
         ),
       );
     });
-  }
-
-  // croping image
-  _cropImage(File x) async {
-    return await ImageCropper.platform
-        .cropImage(sourcePath: x.path, aspectRatioPresets: [
-      CropAspectRatioPreset.ratio16x9,
-    ], uiSettings: [
-      AndroidUiSettings(
-        toolbarTitle: AppLocalizations.of(context)!.selectName,
-        toolbarColor: Colors.lightGreen,
-        toolbarWidgetColor: Colors.white,
-        initAspectRatio: CropAspectRatioPreset.ratio16x9,
-        lockAspectRatio: false,
-        hideBottomControls: true,
-      )
-    ]);
   }
 
   // show data return from link

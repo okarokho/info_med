@@ -37,22 +37,19 @@ class _AddMedicineState extends State<AddMedicine> {
     'Tabs',
     'Capsule',
     'mg',
-    'ml',
-    'cc'
+    '(cc / ml)'
   ];
   final List<String> _listOfMeasurementArabic = [
     'تاب',
     'کبسولة',
     'ملغ',
-    'ملل',
-    'سي سي'
+    '(ملل/ سي سي)'
   ];
   final List<String> _listOfMeasurementKurdish = [
     'تاب',
     'کەپسول',
     'ملگ',
-    'ملل',
-    'سی سی'
+    '(ملل/ سی سی)'
   ];
 
   final List<String> _listOfTypeEnglish = [

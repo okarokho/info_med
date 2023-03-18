@@ -12,7 +12,8 @@ class DbData {
       required this.instruction,
       required this.sideeffect,
       required this.image,
-      required this.type});
+      required this.type,
+      required this.language});
 
   factory DbData.fromjson(Map<String, dynamic> json) {
     return DbData(
@@ -21,7 +22,8 @@ class DbData {
         instruction: json['instruction'],
         sideeffect: json['sideeffect'],
         image: json['image'],
-        type: json['type']);
+        type: json['type'],
+        language: json['language']);
   }
 
   Map<String, dynamic> tojson() {
@@ -32,6 +34,7 @@ class DbData {
       'name': name,
       'image': image,
       'type': type,
+      'language': language
     };
   }
 }

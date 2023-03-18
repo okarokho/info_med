@@ -172,6 +172,7 @@ class _MyDraggableSCrollableSheetState
                                       );
                                     },
                                     child: CachedNetworkImage(
+                                      
                                       imageUrl:
                                           boxInstance.first.image.toString(),
                                       placeholder: (context, url) =>
@@ -249,22 +250,24 @@ class _MyDraggableSCrollableSheetState
                                             if (!_toggle) _toggle = !_toggle;
                                             if (_toggle && !_exist()) {
                                               var test = DbData(
-                                                name: widget.name,
-                                                description: boxInstance
-                                                    .first.description
-                                                    .toString(),
-                                                instruction: boxInstance
-                                                    .first.instruction
-                                                    .toString(),
-                                                sideeffect: boxInstance
-                                                    .first.sideEffect
-                                                    .toString(),
-                                                image: boxInstance.first.image
-                                                    .toString(),
-                                                type: _isAsset == true
-                                                    ? 's'
-                                                    : 'n',
-                                              );
+                                                  name: widget.name,
+                                                  description: boxInstance
+                                                      .first.description
+                                                      .toString(),
+                                                  instruction: boxInstance
+                                                      .first.instruction
+                                                      .toString(),
+                                                  sideeffect: boxInstance
+                                                      .first.sideEffect
+                                                      .toString(),
+                                                  image: boxInstance.first.image
+                                                      .toString(),
+                                                  type: _isAsset == true
+                                                      ? 's'
+                                                      : 'n',
+                                                  language: AppLocalizations.of(
+                                                          context)!
+                                                      .local);
                                               db.insertSaved(test.tojson());
                                               context
                                                   .read<DataProvider>()

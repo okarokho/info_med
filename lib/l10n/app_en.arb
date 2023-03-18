@@ -254,9 +254,9 @@
       "description": "Gallery"
     },
 
-    "searchName": "Search by Name",
+    "searchText": "Search by Text",
     "@searchName":{
-      "description": "Search by Name"
+      "description": "Search by Text"
     },
 
     "enterName": "Enter a Name",

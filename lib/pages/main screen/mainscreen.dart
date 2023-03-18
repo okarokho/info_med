@@ -75,10 +75,10 @@ class _MainState extends State<Main> {
                           .updateChip(1, drugs);
                     }
                     if (text.isNotEmpty) {
-                      final drugsearch = _capitalize(text);
+                      final drugSearch = _capitalize(text);
                       setState(() {
                         _filtered = drugs
-                            .where((element) => element.contains(drugsearch))
+                            .where((element) => element.contains(drugSearch))
                             .toList();
                       });
                     } else {
